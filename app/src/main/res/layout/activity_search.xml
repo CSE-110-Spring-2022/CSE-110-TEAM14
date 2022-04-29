@@ -7,7 +7,7 @@
     tools:context=".SearchActivity">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/exhibit_items"
+        android:id="@+id/search_items"
         android:layout_width="410dp"
         android:layout_height="682dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -18,7 +18,7 @@
         app:layout_constraintVertical_bias="0.979" />
 
     <EditText
-        android:id="@+id/search_exhibit_text"
+        android:id="@+id/search_text"
         android:layout_width="314dp"
         android:layout_height="48dp"
         android:hint="Search"
