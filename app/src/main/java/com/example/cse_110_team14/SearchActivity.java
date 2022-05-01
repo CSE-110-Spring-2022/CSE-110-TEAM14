@@ -14,6 +14,7 @@ import org.w3c.dom.Text;
 import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class SearchActivity extends AppCompatActivity {
@@ -78,6 +79,7 @@ public class SearchActivity extends AppCompatActivity {
 
     }
 
+    //this filters the search items by checking the input string with animals' name and tags
     private void filter(Editable editable) {
         List<ZooData.VertexInfo> newSearchItems = new ArrayList<>();
         if (editable.toString().isEmpty() || (editable.toString().trim().equals(""))) {
@@ -91,7 +93,15 @@ public class SearchActivity extends AppCompatActivity {
                     newSearchItems.add(animalList.get(index));
                 }
             }
+            for(int index = 0; index < animalList.size(); ++index){
+                for(int jindex = 0; jindex < animalList.get(index).tags.size(); jindex++) {
+                    if(animalList.get(index).tags.get(jindex).contains(editable.toString().toLowerCase())) {
+                        newSearchItems.add(animalList.get(index));
+                    }
+                }
+            }
             recyclerView.setAdapter(new SearchListAdapter(newSearchItems));
+            adapter.notifyDataSetChanged();
         }
     }
 }
