@@ -1,6 +1,7 @@
 package com.example.cse_110_team14;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import org.w3c.dom.Text;
 
@@ -27,6 +29,7 @@ public class SearchActivity extends AppCompatActivity {
     public EditText searchBar;
     public SearchListAdapter adapter;
     public List<ZooData.VertexInfo> animalList;
+    public ImageButton deleteSearchBar;
     public Button planButton;
 
     @Override
@@ -40,19 +43,27 @@ public class SearchActivity extends AppCompatActivity {
 
         // List of animals
         animalList = new ArrayList<>(animalMap.values());
-        this.adapter = new SearchListAdapter(animalList);
+
+        adapter = new SearchListAdapter(animalList);
         adapter.setHasStableIds(true);
 
         recyclerView = findViewById(R.id.search_items);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
         searchBar = findViewById(R.id.search_text);
-
+        deleteSearchBar = findViewById(R.id.delete_btn);
         planButton = findViewById(R.id.plan_button);
         planButton.setText("Plan(0)");
 
         adapter.setSearchItems(animalList);
 
+        //Add dividers between recyclerView items
+        DividerItemDecoration dividerItemDecoration =
+                new DividerItemDecoration(recyclerView.getContext(),layoutManager.getOrientation());
+        recyclerView.addItemDecoration(dividerItemDecoration);
+
+        //called when the search bar is being edited
         planButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -63,11 +74,9 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
 
-
         searchBar.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
             }
 
             @Override
@@ -82,6 +91,13 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
 
+        //called when X button is clicked
+        deleteSearchBar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                searchBar.setText("");
+            }
+        });
     }
 
     //this filters the search items by checking the input string with animals' name and tags
@@ -89,7 +105,6 @@ public class SearchActivity extends AppCompatActivity {
         List<ZooData.VertexInfo> newSearchItems = new ArrayList<>();
         if (editable.toString().isEmpty() || (editable.toString().trim().equals(""))) {
             recyclerView.setAdapter(new SearchListAdapter(animalList));
-            adapter.notifyDataSetChanged();
         } else {
             String newText = editable.toString().toLowerCase();
             for (int index = 0; index < animalList.size(); ++index) {
@@ -105,15 +120,8 @@ public class SearchActivity extends AppCompatActivity {
                     }
                 }
             }
-//            for(int index = 0; index < animalList.size(); ++index){
-//                for(int jindex = 0; jindex < animalList.get(index).tags.size(); jindex++) {
-//                    if(animalList.get(index).tags.get(jindex).contains(editable.toString().toLowerCase())) {
-//                        newSearchItems.add(animalList.get(index));
-//                    }
-//                }
-//            }
             recyclerView.setAdapter(new SearchListAdapter(newSearchItems));
-            adapter.notifyDataSetChanged();
         }
+        adapter.notifyDataSetChanged();
     }
 }
