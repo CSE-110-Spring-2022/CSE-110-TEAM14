@@ -26,6 +26,7 @@
         android:layout_height="48dp"
         android:layout_marginStart="5dp"
         android:hint="Search"
+        android:singleLine="true"
         android:text=""
         app:layout_constraintBottom_toTopOf="@+id/search_items"
         app:layout_constraintEnd_toStartOf="@id/microphone_btn"

@@ -29,6 +29,7 @@ public class ZooData {
             @SerializedName("intersection") INTERSECTION
         }
 
+
         @Override
         public String toString() {
             return "VertexInfo{" +
@@ -36,6 +37,7 @@ public class ZooData {
                     ", kind=" + kind +
                     ", name='" + name + '\'' +
                     ", tags=" + tags +
+                    ", checked=" + checked +
                     '}';
         }
 
@@ -43,6 +45,7 @@ public class ZooData {
         public Kind kind;
         public String name;
         public List<String> tags;
+        public boolean checked = false;
     }
 
     public static class EdgeInfo {

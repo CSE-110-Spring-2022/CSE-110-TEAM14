@@ -3,6 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/rjaki/Documents/Android/CSE-110-TEAM14/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/Users/rjaki/Documents/Android/CSE-110-TEAM14/app/src/main/res/layout/activity_search.xml" value="0.25" />
+        <entry key="..\:/Users/rjaki/Documents/Android/CSE-110-TEAM14/app/src/main/res/layout/search_list_item.xml" value="0.25" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.2085" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_search.xml" value="0.25759518476132653" />

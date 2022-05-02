@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.widget.EditText;
 
 import org.w3c.dom.Text;
@@ -72,6 +73,7 @@ public class SearchActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
+                Log.d("SearchActivity", animalList.get(0).toString());
                 filter(editable);
                 adapter.notifyDataSetChanged();
             }
@@ -85,21 +87,28 @@ public class SearchActivity extends AppCompatActivity {
         if (editable.toString().isEmpty() || (editable.toString().trim().equals(""))) {
             recyclerView.setAdapter(new SearchListAdapter(animalList));
             adapter.notifyDataSetChanged();
-        }
-        else {
+        } else {
             String newText = editable.toString().toLowerCase();
-            for(int index = 0; index < animalList.size(); ++index){
-                if(animalList.get(index).name.toLowerCase().contains(newText)){
+            for (int index = 0; index < animalList.size(); ++index) {
+                if (animalList.get(index).name.toLowerCase().contains(newText)) {
                     newSearchItems.add(animalList.get(index));
-                }
-            }
-            for(int index = 0; index < animalList.size(); ++index){
-                for(int jindex = 0; jindex < animalList.get(index).tags.size(); jindex++) {
-                    if(animalList.get(index).tags.get(jindex).contains(editable.toString().toLowerCase())) {
-                        newSearchItems.add(animalList.get(index));
+                    continue;
+                } else {
+                    for (int jindex = 0; jindex < animalList.get(index).tags.size(); jindex++) {
+                        if (animalList.get(index).tags.get(jindex).equals
+                                (editable.toString().toLowerCase())) {
+                            newSearchItems.add(animalList.get(index));
+                        }
                     }
                 }
             }
+//            for(int index = 0; index < animalList.size(); ++index){
+//                for(int jindex = 0; jindex < animalList.get(index).tags.size(); jindex++) {
+//                    if(animalList.get(index).tags.get(jindex).contains(editable.toString().toLowerCase())) {
+//                        newSearchItems.add(animalList.get(index));
+//                    }
+//                }
+//            }
             recyclerView.setAdapter(new SearchListAdapter(newSearchItems));
             adapter.notifyDataSetChanged();
         }
