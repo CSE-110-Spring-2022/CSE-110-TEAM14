@@ -105,6 +105,7 @@ public class SearchActivity extends AppCompatActivity {
         List<ZooData.VertexInfo> newSearchItems = new ArrayList<>();
         if (editable.toString().isEmpty() || (editable.toString().trim().equals(""))) {
             recyclerView.setAdapter(new SearchListAdapter(animalList));
+            newSearchItems = animalList;
         } else {
             String newText = editable.toString().toLowerCase();
             for (int index = 0; index < animalList.size(); ++index) {
