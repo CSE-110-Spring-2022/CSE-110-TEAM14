@@ -126,4 +126,14 @@ public class SearchActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
         return newSearchItems;
     }
+    public List<ZooData.VertexInfo> checkedAnimals() {
+        List<ZooData.VertexInfo> checkedAnimals = new ArrayList<>();
+        for (int i = 0; i < animalList.size(); i++) {
+            if (animalList.get(i).checked) {
+                checkedAnimals.add(animalList.get(i));
+            }
+        }
+        return checkedAnimals;
+    }
+
 }

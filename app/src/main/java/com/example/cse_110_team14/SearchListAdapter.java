@@ -58,7 +58,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Vi
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView textView;
         private ZooData.VertexInfo searchItem;
-        private final CheckBox checkBox;
+        public CheckBox checkBox;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
