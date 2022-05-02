@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.lifecycle.Lifecycle;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -55,14 +56,31 @@ public class SearchbarTest {
         scenario.moveToState(Lifecycle.State.CREATED);
 
         scenario.onActivity(activity -> {
-//            List<ZooData.VertexInfo> filteredList =
-//                    activity.filter(new SpannableStringBuilder("Elephant"));
-//            assertEquals(filteredList.size(), 1);
-//            assertEquals(filteredList.get(0).name, "Elephant Odyssey");
+            List<ZooData.VertexInfo> filteredList =
+                    activity.filter(new SpannableStringBuilder("Elephant"));
+            assertEquals(filteredList.size(), 1);
+            assertEquals(filteredList.get(0).name, "Elephant Odyssey");
 
 
         });
 
+    }
+
+    @Test
+    public void testSearchBehavior() {
+        ActivityScenario<SearchActivity> scenario = ActivityScenario.launch(SearchActivity.class);
+        scenario.moveToState(Lifecycle.State.CREATED);
+
+        scenario.onActivity(activity -> {
+            EditText searchBar = activity.searchBar;
+            RecyclerView recyclerView = activity.recyclerView;
+
+            searchBar.requestFocus();
+            searchBar.setText("Gorilla");
+            searchBar.clearFocus();
+
+            assertEquals("Gorilla", (searchBar.getText()).toString());
+        });
     }
 
 }
