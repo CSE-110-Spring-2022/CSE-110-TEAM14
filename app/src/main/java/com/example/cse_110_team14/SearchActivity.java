@@ -101,7 +101,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     //this filters the search items by checking the input string with animals' name and tags
-    private void filter(Editable editable) {
+    public List<ZooData.VertexInfo>  filter(Editable editable) {
         List<ZooData.VertexInfo> newSearchItems = new ArrayList<>();
         if (editable.toString().isEmpty() || (editable.toString().trim().equals(""))) {
             recyclerView.setAdapter(new SearchListAdapter(animalList));
@@ -123,5 +123,6 @@ public class SearchActivity extends AppCompatActivity {
             recyclerView.setAdapter(new SearchListAdapter(newSearchItems));
         }
         adapter.notifyDataSetChanged();
+        return newSearchItems;
     }
 }
