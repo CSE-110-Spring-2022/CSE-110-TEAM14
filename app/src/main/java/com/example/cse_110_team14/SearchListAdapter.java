@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.ViewHolder> {
     private List<ZooData.VertexInfo> searchItems;
@@ -66,7 +67,6 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Vi
             this.checkBox.setOnClickListener( view -> {
                     searchItem.checked = checkBox.isChecked();
                 Log.d("SearchListAdapter", searchItem.checked + " ");
-
             });
 
         }

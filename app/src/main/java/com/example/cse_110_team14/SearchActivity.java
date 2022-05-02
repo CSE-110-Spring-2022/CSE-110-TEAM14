@@ -4,10 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 
 import org.w3c.dom.Text;
@@ -24,26 +27,12 @@ public class SearchActivity extends AppCompatActivity {
     public EditText searchBar;
     public SearchListAdapter adapter;
     public List<ZooData.VertexInfo> animalList;
+    public Button planButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-
-        // Example of animal Object:
-        /*
-        {
-            id='elephant_odyssey',
-            kind=EXHIBIT,
-            name='Elephant Odyssey',
-            tags=[elephant, mammal, africa]
-         }
-         */
-
-        /* So what we want to do in this activity is if the string they are searching for equals
-           name OR one of the tags, then we want to display the animal.
-         */
-
 
         // Map from animal id to animal object
         Map<String, ZooData.VertexInfo> animalMap =
@@ -59,7 +48,21 @@ public class SearchActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         searchBar = findViewById(R.id.search_text);
 
+        planButton = findViewById(R.id.plan_button);
+        planButton.setText("Plan(0)");
+
         adapter.setSearchItems(animalList);
+
+        planButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                System.out.println("ive been touched");
+                setContentView(R.layout.activity_plan);
+                //Intent intent = new Intent(SearchActivity.this, PlanActivity.class);
+                //startActivity(intent);
+            }
+        });
+
 
         searchBar.addTextChangedListener(new TextWatcher() {
             @Override
