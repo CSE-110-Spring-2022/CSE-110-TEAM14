@@ -24,36 +24,33 @@ import java.util.List;
 @RunWith(AndroidJUnit4.class)
 public class SearchbarTest {
     @Rule
-    public ActivityScenarioRule<MainActivity> scenarioRule =
-            new ActivityScenarioRule<>(MainActivity.class);
+    public ActivityScenarioRule<SearchActivity> scenarioRule =
+            new ActivityScenarioRule<>(SearchActivity.class);
 
     private final static int NUM_ANIMALS = 7;
     @Test
     public void allAnimalsInEmptySearchBar() {
-        ActivityScenario<MainActivity> scenario = scenarioRule.getScenario();
+        ActivityScenario<SearchActivity> scenario = scenarioRule.getScenario();
 
         scenario.moveToState(Lifecycle.State.CREATED);
 
-
         scenario.onActivity(activity -> {
 //            // Makes sure all animals are originally present
-//            List<ZooData.VertexInfo> filteredList =
-//                    activity.filter(new SpannableStringBuilder(""));
-//            assertEquals(filteredList.size(), NUM_ANIMALS);
-//
-//            filteredList =
-//                    activity.filter(new SpannableStringBuilder(""));
-//            //Makes sure all animals are present when there is nothing in the search bar
-//            assertEquals(filteredList.size(), NUM_ANIMALS);
+            List<ZooData.VertexInfo> filteredList =
+                    activity.filter(new SpannableStringBuilder(""));
+            assertEquals(filteredList.size(), NUM_ANIMALS);
 
-
+           filteredList =
+                    activity.filter(new SpannableStringBuilder(""));
+          // Makes sure all animals are present when there is nothing in the search bar
+            assertEquals(filteredList.size(), NUM_ANIMALS);
         });
     }
 
 
     @Test
     public void filterAnimalsById() {
-        ActivityScenario<MainActivity> scenario = scenarioRule.getScenario();
+        ActivityScenario<SearchActivity> scenario = scenarioRule.getScenario();
 
         scenario.moveToState(Lifecycle.State.CREATED);
 
