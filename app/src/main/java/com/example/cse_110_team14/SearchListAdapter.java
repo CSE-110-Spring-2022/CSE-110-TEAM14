@@ -21,7 +21,7 @@ import java.util.Set;
 
 public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.ViewHolder> {
     private List<ZooData.VertexInfo> searchItems;
-    private final List<ZooData.VertexInfo> searchItemsFull;
+    public final List<ZooData.VertexInfo> searchItemsFull;
 
     public SAStorage sas;
 
