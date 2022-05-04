@@ -32,13 +32,10 @@ public class SearchActivity extends AppCompatActivity {
     public ImageButton deleteSearchBar;
     public Button planButton;
 
-    //public Lol lol;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-        Intent planIntent = new Intent(this, PlanActivity.class);
 
         // Map from animal id to animal object
         Map<String, ZooData.VertexInfo> animalMap =
@@ -66,13 +63,14 @@ public class SearchActivity extends AppCompatActivity {
                 new DividerItemDecoration(recyclerView.getContext(),layoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        adapter.setSas(new SAStorage(this));
-
         //called when the search bar is being edited
         planButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                startActivity(planIntent);
+                System.out.println("ive been touched");
+                setContentView(R.layout.activity_plan);
+                //Intent intent = new Intent(SearchActivity.this, PlanActivity.class);
+                //startActivity(intent);
             }
         });
 
@@ -101,9 +99,6 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
     }
-    public void setPlanCount(int count){
-        planButton.setText("Plan(" + count + ")");
-    }
 
     //this filters the search items by checking the input string with animals' name and tags
     public List<ZooData.VertexInfo>  filter(Editable editable) {
@@ -129,9 +124,6 @@ public class SearchActivity extends AppCompatActivity {
             recyclerView.setAdapter(new SearchListAdapter(newSearchItems));
         }
         adapter.notifyDataSetChanged();
-
-        ((SearchListAdapter)recyclerView.getAdapter()).setSas(new SAStorage(this));
-
         return newSearchItems;
     }
     public List<ZooData.VertexInfo> checkedAnimals() {
