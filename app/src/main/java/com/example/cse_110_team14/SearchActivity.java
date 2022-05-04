@@ -72,6 +72,14 @@ public class SearchActivity extends AppCompatActivity {
         planButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
+                List<ZooData.VertexInfo> vi_list =((SearchListAdapter)recyclerView.getAdapter()).searchItemsFull;
+                ArrayList<String> ca_list = new ArrayList<String>();
+
+                for(ZooData.VertexInfo vinfo : vi_list)
+                    if(vinfo.checked)
+                        ca_list.add(vinfo.name);
+
+                planIntent.putExtra("checked_animals", ca_list);
                 startActivity(planIntent);
             }
         });
