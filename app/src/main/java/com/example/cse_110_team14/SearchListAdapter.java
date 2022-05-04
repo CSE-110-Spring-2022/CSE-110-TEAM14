@@ -34,7 +34,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Vi
 
     public void setSearchItems(List<ZooData.VertexInfo> newSearchItems) {
         this.searchItems.clear();
-        this.searchItems = newSearchItems;
+        this.searchItems.addAll(newSearchItems);
         notifyDataSetChanged();
     }
 

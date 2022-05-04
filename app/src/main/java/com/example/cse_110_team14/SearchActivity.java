@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
@@ -31,6 +32,7 @@ public class SearchActivity extends AppCompatActivity {
     public List<ZooData.VertexInfo> animalList;
     public ImageButton deleteSearchBar;
     public Button planButton;
+    public TextView noSearchResults;
 
     //public Lol lol;
 
@@ -58,6 +60,8 @@ public class SearchActivity extends AppCompatActivity {
         deleteSearchBar = findViewById(R.id.delete_btn);
         planButton = findViewById(R.id.plan_button);
         planButton.setText("Plan(0)");
+        noSearchResults = findViewById(R.id.no_search_results);
+        noSearchResults.setVisibility(View.INVISIBLE);
 
         adapter.setSearchItems(animalList);
 
@@ -116,8 +120,11 @@ public class SearchActivity extends AppCompatActivity {
     //this filters the search items by checking the input string with animals' name and tags
     public List<ZooData.VertexInfo>  filter(Editable editable) {
         List<ZooData.VertexInfo> newSearchItems = new ArrayList<>();
+        noSearchResults.setVisibility(View.INVISIBLE);
+        recyclerView.setVisibility(View.VISIBLE);
         if (editable.toString().isEmpty() || (editable.toString().trim().equals(""))) {
-            recyclerView.setAdapter(new SearchListAdapter(animalList));
+//            recyclerView.setAdapter(new SearchListAdapter(animalList));
+            adapter.setSearchItems(animalList);
             newSearchItems = animalList;
         } else {
             String newText = editable.toString().toLowerCase();
@@ -134,14 +141,20 @@ public class SearchActivity extends AppCompatActivity {
                     }
                 }
             }
-            recyclerView.setAdapter(new SearchListAdapter(newSearchItems));
+//            recyclerView.setAdapter(new SearchListAdapter(newSearchItems));
+            adapter.setSearchItems(newSearchItems);
         }
         adapter.notifyDataSetChanged();
 
         ((SearchListAdapter)recyclerView.getAdapter()).setSas(new SAStorage(this));
 
+        if (newSearchItems.isEmpty()) {
+            displayNoSearchResults();
+        }
+
         return newSearchItems;
     }
+
     public List<ZooData.VertexInfo> checkedAnimals() {
         List<ZooData.VertexInfo> checkedAnimals = new ArrayList<>();
         for (int i = 0; i < animalList.size(); i++) {
@@ -152,4 +165,8 @@ public class SearchActivity extends AppCompatActivity {
         return checkedAnimals;
     }
 
+    public void displayNoSearchResults() {
+        recyclerView.setVisibility(View.INVISIBLE);
+        noSearchResults.setVisibility(View.VISIBLE);
+    }
 }
