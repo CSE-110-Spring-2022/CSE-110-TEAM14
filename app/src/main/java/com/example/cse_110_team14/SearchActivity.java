@@ -146,7 +146,7 @@ public class SearchActivity extends AppCompatActivity {
         }
         adapter.notifyDataSetChanged();
 
-        ((SearchListAdapter)recyclerView.getAdapter()).setSas(new SAStorage(this));
+        //((SearchListAdapter)recyclerView.getAdapter()).setSas(new SAStorage(this));
 
         if (newSearchItems.isEmpty()) {
             displayNoSearchResults();
