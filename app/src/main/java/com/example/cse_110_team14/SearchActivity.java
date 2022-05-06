@@ -50,12 +50,13 @@ public class SearchActivity extends AppCompatActivity {
 
         // List of vertexes
         animalList = new ArrayList<>();
-
-        for (ZooData.VertexInfo vertex : vertexList) {
-            if (vertex.kind.toString().equals("EXHIBIT")) {
-                animalList.add(vertex);
-            }
-        }
+//
+//        for (ZooData.VertexInfo vertex : vertexList) {
+//            if (vertex.kind.toString().equals("EXHIBIT")) {
+//                animalList.add(vertex);
+//            }
+//        }
+        animalList.addAll(vertexList);
 
         adapter = new SearchListAdapter(animalList);
         adapter.setHasStableIds(true);
