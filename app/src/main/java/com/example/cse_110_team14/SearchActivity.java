@@ -148,6 +148,7 @@ public class SearchActivity extends AppCompatActivity {
 
         //((SearchListAdapter)recyclerView.getAdapter()).setSas(new SAStorage(this));
 
+
         if (newSearchItems.isEmpty()) {
             displayNoSearchResults();
         }
