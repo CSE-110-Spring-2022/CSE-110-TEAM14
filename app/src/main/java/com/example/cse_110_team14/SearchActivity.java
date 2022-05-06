@@ -43,11 +43,20 @@ public class SearchActivity extends AppCompatActivity {
         Intent planIntent = new Intent(this, PlanActivity.class);
 
         // Map from animal id to animal object
-        Map<String, ZooData.VertexInfo> animalMap =
+        Map<String, ZooData.VertexInfo> vertexInfoMap =
                 ZooData.loadVertexInfoJSON(this, "sample_node_info.json");
 
-        // List of animals
-        animalList = new ArrayList<>(animalMap.values());
+        List<ZooData.VertexInfo> vertexList = new ArrayList<>(vertexInfoMap.values());
+
+        // List of vertexes
+        animalList = new ArrayList<>();
+//
+//        for (ZooData.VertexInfo vertex : vertexList) {
+//            if (vertex.kind.toString().equals("EXHIBIT")) {
+//                animalList.add(vertex);
+//            }
+//        }
+        animalList.addAll(vertexList);
 
         adapter = new SearchListAdapter(animalList);
         adapter.setHasStableIds(true);
@@ -128,15 +137,15 @@ public class SearchActivity extends AppCompatActivity {
             newSearchItems = animalList;
         } else {
             String newText = editable.toString().toLowerCase();
-            for (int index = 0; index < animalList.size(); ++index) {
-                if (animalList.get(index).name.toLowerCase().contains(newText)) {
-                    newSearchItems.add(animalList.get(index));
+            for (int i = 0; i < animalList.size(); ++i) {
+                if (animalList.get(i).name.toLowerCase().contains(newText)) {
+                    newSearchItems.add(animalList.get(i));
                     continue;
                 } else {
-                    for (int jindex = 0; jindex < animalList.get(index).tags.size(); jindex++) {
-                        if (animalList.get(index).tags.get(jindex).equals
+                    for (int jindex = 0; jindex < animalList.get(i).tags.size(); jindex++) {
+                        if (animalList.get(i).tags.get(jindex).equals
                                 (editable.toString().toLowerCase())) {
-                            newSearchItems.add(animalList.get(index));
+                            newSearchItems.add(animalList.get(i));
                         }
                     }
                 }
