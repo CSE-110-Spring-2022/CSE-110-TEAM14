@@ -51,12 +51,21 @@ public class PlanActivity extends AppCompatActivity {
         List<GraphPath<String, IdentifiedWeightedEdge>> truePath = truePathPair.first;
         List<String> truePathNames = truePathPair.second;
 
+
+        List<String> fullDirections = new ArrayList<>();
         for(int i = 0; i < truePath.size(); i++) {
             GraphPath<String, IdentifiedWeightedEdge> path = truePath.get(i);
-
-            Log.d("PlanActivity",
-                    edgeListToString(g,path, truePathNames.get(i), truePathNames.get(i+1)));
+            String directions = directions(g,path, truePathNames.get(i), truePathNames.get(i+1));
+//            Log.d("PlanActivity", directions);
+            fullDirections.add(directions);
         }
+
+        // The list fullDirections will contain the entire path from entrance to exit to each of the
+        // planned animals and then back to the entrance
+        // The i-th element of fullDirections will be the directions to the i-th planned animal
+        // from the i-1th animal.
+
+        Log.d("PlanActivity", fullDirections.toString());
     }
 
     // This method finds the order of vertexes that the user should visit
@@ -109,7 +118,7 @@ public class PlanActivity extends AppCompatActivity {
         return path;
     }
 
-    public String edgeListToString(Graph<String, IdentifiedWeightedEdge> g,
+    public String directions(Graph<String, IdentifiedWeightedEdge> g,
                                    GraphPath<String, IdentifiedWeightedEdge> path,
                                    String start, String goal) {
 
@@ -117,27 +126,38 @@ public class PlanActivity extends AppCompatActivity {
 //        sb.append("The shortest path from " +
 //                animalIdToName.get(start) + " to " +
 //                animalIdToName.get(goal) + " is:\n");
+
         Map<String, ZooData.VertexInfo> vInfo =
                 ZooData.loadVertexInfoJSON(this, "sample_node_info.json");
         Map<String, ZooData.EdgeInfo> eInfo =
                 ZooData.loadEdgeInfoJSON(this, "sample_edge_info.json");
         int i = 1;
-        String current = null;
+        String currentSt = null;
+        String curr = animalIdToName.get(start);
         for (IdentifiedWeightedEdge e : path.getEdgeList()) {
             sb.append(" " + i + ". ");
-            if(eInfo.get(e.getId()).street.equals(current)) {
-                sb.append("Continue on " + eInfo.get(e.getId()).street);
+            if(eInfo.get(e.getId()).street.equals(currentSt)) {
+                sb.append("Continue on " + eInfo.get(e.getId()).street + " ");
             }
             else {
-                sb.append("Proceed on  " + eInfo.get(e.getId()).street);
+                sb.append("Proceed on " + eInfo.get(e.getId()).street +" ");
             }
-            current = eInfo.get(e.getId()).street;
-//            sb.append(" " + i + ".Walk " + g.getEdgeWeight(e) + " meters along " +
-//                    eInfo.get(e.getId()).street + " from " +
-//                    street1 + " to " +
-//                    street2 + "\n");
-//            i++;
-//            start = street2;
+            currentSt = eInfo.get(e.getId()).street;
+            String target = vInfo.get(g.getEdgeTarget(e).toString()).name;
+            String source = vInfo.get(g.getEdgeSource(e).toString()).name;
+
+            sb.append((int) g.getEdgeWeight(e) + " ft towards" );
+
+            if(curr.equals(target)) {
+                sb.append(" " + source + ".\n");
+                curr = source;
+            }
+            else {
+                sb.append(" " + target + ".\n");
+                curr = target;
+            }
+
+            i++;
         }
 
         return sb.toString();
