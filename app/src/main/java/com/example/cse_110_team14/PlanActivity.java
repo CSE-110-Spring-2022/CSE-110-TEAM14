@@ -1,8 +1,11 @@
 package com.example.cse_110_team14;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,7 +23,8 @@ public class PlanActivity extends AppCompatActivity {
 
     public RecyclerView planRecyclerView;
     public PlanListAdapter adapter;
-    public TextView planSize;
+    public TextView planTitle;
+    public Button directionsButton;
 
     public Map<String, String> animalIdToName = new HashMap<>();
     public Map<String, String> animalNameToId = new HashMap<>();
@@ -29,6 +33,7 @@ public class PlanActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plan);
+        Intent visitAnimalIntent = new Intent(this, VisitAnimalActivity.class);
 
         // List of planned animal names
         ArrayList<String> plannedAnimals =
@@ -60,16 +65,15 @@ public class PlanActivity extends AppCompatActivity {
         List<String> truePathNames = truePathPair.second;
 
 
-//        List<String> fullDirections = new ArrayList<>();
-//        for(int i = 0; i < truePath.size(); i++) {
-//            GraphPath<String, IdentifiedWeightedEdge> path = truePath.get(i);
-//            String directions = directions(g,path, truePathNames.get(i), truePathNames.get(i+1));
-////            Log.d("PlanActivity", directions);
-//            fullDirections.add(directions);
-//        }
+        ArrayList<String> fullDirections = new ArrayList<>();
+        for(int i = 0; i < truePath.size(); i++) {
+            GraphPath<String, IdentifiedWeightedEdge> path = truePath.get(i);
+            String directions = directions(g,path, truePathNames.get(i), truePathNames.get(i+1));
+            fullDirections.add(directions);
+        }
 
-        planSize = findViewById(R.id.plan_size_display);
-        planSize.setText("(" + plannedAnimals.size() + ")");
+        planTitle = findViewById(R.id.plan_title);
+        planTitle.setText("Plan(" + plannedAnimals.size() + ")");
 
         List<Pair<String, Integer>> planList = new ArrayList<>();
         String exhibitName;
@@ -77,12 +81,7 @@ public class PlanActivity extends AppCompatActivity {
         Pair<String, Integer> planPair;
         for (int i  = 0; i < truePath.size(); ++i) {
             GraphPath<String, IdentifiedWeightedEdge> path = truePath.get(i);
-            if (i != truePath.size()) {
-                exhibitName = truePathNames.get(i+1);
-            }
-            else {
-                exhibitName = "entrance_exit_gate";
-            }
+            exhibitName = animalIdToName.get(truePathNames.get(i+1));
             totalPathDistance += (int) path.getWeight();
             planPair = new Pair<>(exhibitName, totalPathDistance);
             planList.add(planPair);
@@ -95,11 +94,21 @@ public class PlanActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         planRecyclerView.setLayoutManager(layoutManager);
         planRecyclerView.setAdapter(adapter);
+        directionsButton = findViewById(R.id.directions_button);
 
         //Add dividers between recyclerView items
         DividerItemDecoration dividerItemDecoration =
                 new DividerItemDecoration(planRecyclerView.getContext(),layoutManager.getOrientation());
         planRecyclerView.addItemDecoration(dividerItemDecoration);
+
+        directionsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                visitAnimalIntent.putExtra("full_directions", fullDirections);
+                startActivity(visitAnimalIntent);
+            }
+        });
+
 
         // The list fullDirections will contain the entire path from entrance to exit to each of the
         // planned animals and then back to the entrance
