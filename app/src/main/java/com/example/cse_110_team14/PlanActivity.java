@@ -79,12 +79,17 @@ public class PlanActivity extends AppCompatActivity {
         String exhibitName;
         Integer totalPathDistance = 0;
         Pair<String, Integer> planPair;
+
+        ArrayList<String> animalsInOrder = new ArrayList<>();
+        ArrayList<Integer> distancesInOrder = new ArrayList<>();
         for (int i  = 0; i < truePath.size(); ++i) {
             GraphPath<String, IdentifiedWeightedEdge> path = truePath.get(i);
             exhibitName = animalIdToName.get(truePathNames.get(i+1));
             totalPathDistance += (int) path.getWeight();
             planPair = new Pair<>(exhibitName, totalPathDistance);
             planList.add(planPair);
+            animalsInOrder.add(exhibitName);
+            distancesInOrder.add((int)(path.getWeight()));
         }
 
         adapter = new PlanListAdapter(planList);
@@ -104,7 +109,9 @@ public class PlanActivity extends AppCompatActivity {
         directionsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                visitAnimalIntent.putExtra("animal_order", animalsInOrder);
                 visitAnimalIntent.putExtra("full_directions", fullDirections);
+                visitAnimalIntent.putExtra("distances", distancesInOrder);
                 startActivity(visitAnimalIntent);
             }
         });
