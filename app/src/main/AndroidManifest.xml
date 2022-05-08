@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CSE110TEAM14">
         <activity
+            android:name=".VisitAnimalActivity"
+            android:exported="true" />
+        <activity
             android:name=".PlanActivity"
             android:exported="true" />
         <activity
