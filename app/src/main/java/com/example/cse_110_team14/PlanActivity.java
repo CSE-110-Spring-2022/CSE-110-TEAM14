@@ -65,10 +65,13 @@ public class PlanActivity extends AppCompatActivity {
         List<String> truePathNames = truePathPair.second;
 
 
+        // PASS THIS LIST OF STRINGS PLS <3
         ArrayList<String> fullDirections = new ArrayList<>();
+
         for(int i = 0; i < truePath.size(); i++) {
             GraphPath<String, IdentifiedWeightedEdge> path = truePath.get(i);
             String directions = directions(g,path, truePathNames.get(i), truePathNames.get(i+1));
+//            Log.d("PlanActivity", directions);
             fullDirections.add(directions);
         }
 
@@ -121,6 +124,9 @@ public class PlanActivity extends AppCompatActivity {
         // planned animals and then back to the entrance
         // The i-th element of fullDirections will be the directions to the i-th planned animal
         // from the i-1th animal.
+
+
+
     }
 
     // This method finds the order of vertexes that the user should visit
