@@ -23,7 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
+
+// This is where you can search and select what animals you want to visit.
 public class SearchActivity extends AppCompatActivity {
 
     public RecyclerView recyclerView;
@@ -34,7 +37,6 @@ public class SearchActivity extends AppCompatActivity {
     public Button planButton;
     public TextView noSearchResults;
 
-    //public Lol lol;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,12 +53,14 @@ public class SearchActivity extends AppCompatActivity {
         // List of vertexes
         animalList = new ArrayList<>();
 
+        // Filters out non-exhibit vertexes
         for (ZooData.VertexInfo vertex : vertexList) {
             if (vertex.kind.toString().equals("EXHIBIT")) {
                 animalList.add(vertex);
             }
         }
 
+        // Initialize recycler view and plan button
         adapter = new SearchListAdapter(animalList);
         adapter.setHasStableIds(true);
 
@@ -85,7 +89,10 @@ public class SearchActivity extends AppCompatActivity {
         planButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                List<ZooData.VertexInfo> vi_list =((SearchListAdapter)recyclerView.getAdapter()).searchItemsFull;
+                // Go to next activity and pass the list of animals they want to visit
+                List<ZooData.VertexInfo> vi_list =
+                        ((SearchListAdapter)
+                                Objects.requireNonNull(recyclerView.getAdapter())).searchItemsFull;
                 ArrayList<String> ca_list = new ArrayList<String>();
 
                 for(ZooData.VertexInfo vinfo : vi_list)
@@ -108,6 +115,7 @@ public class SearchActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
+                // Filters the list of animals based on the search bar
                 Log.d("SearchActivity", animalList.get(0).toString());
                 filter(editable);
                 adapter.notifyDataSetChanged();
@@ -115,6 +123,7 @@ public class SearchActivity extends AppCompatActivity {
         });
 
         //called when X button is clicked
+        //clears the search bar
         deleteSearchBar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -123,6 +132,7 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
     public void setPlanCount(int count){
+        // Sets the number of animals in the plan
         if (count == 0) {
             planButton.setEnabled(false);
         }
@@ -133,12 +143,13 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     //this filters the search items by checking the input string with animals' name and tags
-    public List<ZooData.VertexInfo>  filter(Editable editable) {
+    public List<ZooData.VertexInfo> filter(Editable editable) {
+        // Filters the list of animals based on the search bar so that only the animals that match
+        // the search bar or tags are displayed
         List<ZooData.VertexInfo> newSearchItems = new ArrayList<>();
         noSearchResults.setVisibility(View.INVISIBLE);
         recyclerView.setVisibility(View.VISIBLE);
         if (editable.toString().isEmpty() || (editable.toString().trim().equals(""))) {
-//            recyclerView.setAdapter(new SearchListAdapter(animalList));
             adapter.setSearchItems(animalList);
             newSearchItems = animalList;
         } else {

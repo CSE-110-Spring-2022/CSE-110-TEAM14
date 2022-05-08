@@ -19,6 +19,7 @@ import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 
 import java.util.*;
 
+// This is where you can see the plan you created. It also calculates the route and distances.
 public class PlanActivity extends AppCompatActivity {
 
     public RecyclerView planRecyclerView;
@@ -39,50 +40,62 @@ public class PlanActivity extends AppCompatActivity {
         ArrayList<String> plannedAnimals =
                 getIntent().getStringArrayListExtra("checked_animals");
 
-
+        Log.d("PlanActivity", "Planned animals: " + plannedAnimals);
         Map<String, ZooData.VertexInfo> animalMap =
                 ZooData.loadVertexInfoJSON(this, "sample_node_info.json");
         // List of ALL animals
         List<ZooData.VertexInfo> animalList = new ArrayList<>(animalMap.values());
 
+        // Map of animal names to animal IDs and vice versa for easy lookup
         for (ZooData.VertexInfo animal : animalList) {
             animalIdToName.put(animal.id, animal.name);
             animalNameToId.put(animal.name, animal.id);
         }
+
+        // List of animal IDs we plan to visit
         ArrayList<String> plannedAnimalsIds = new ArrayList<>();
 
         for (String animal : plannedAnimals) {
             plannedAnimalsIds.add(animalNameToId.get(animal));
         }
+
         Graph<String, IdentifiedWeightedEdge> g
                 = ZooData.loadZooGraphJSON(this, "sample_zoo_graph.json");
 
+
+        // Calculates the shortest path to visit all vertices
         Pair<List<GraphPath<String, IdentifiedWeightedEdge>>,List<String>> truePathPair =
                 shortestPath(plannedAnimalsIds, g,
                         "entrance_exit_gate", "entrance_exit_gate");
 
+        // List of paths from one planned animal to another
         List<GraphPath<String, IdentifiedWeightedEdge>> truePath = truePathPair.first;
+        // List of animal names in order of visit
         List<String> truePathNames = truePathPair.second;
 
 
-        // PASS THIS LIST OF STRINGS PLS <3
+        // List of directions for a user to follow
         ArrayList<String> fullDirections = new ArrayList<>();
 
         for(int i = 0; i < truePath.size(); i++) {
             GraphPath<String, IdentifiedWeightedEdge> path = truePath.get(i);
             String directions = directions(g,path, truePathNames.get(i), truePathNames.get(i+1));
-//            Log.d("PlanActivity", directions);
+            Log.d("PlanActivity", directions);
             fullDirections.add(directions);
         }
 
+        // Displays number of animals to visit
         planTitle = findViewById(R.id.plan_title);
         planTitle.setText("Plan(" + plannedAnimals.size() + ")");
 
+
+        // Calculating total distance to display
         List<Pair<String, Integer>> planList = new ArrayList<>();
         String exhibitName;
         Integer totalPathDistance = 0;
         Pair<String, Integer> planPair;
 
+        // Keeps track of distances and animals in order
         ArrayList<String> animalsInOrder = new ArrayList<>();
         ArrayList<Integer> distancesInOrder = new ArrayList<>();
         for (int i  = 0; i < truePath.size(); ++i) {
@@ -95,6 +108,7 @@ public class PlanActivity extends AppCompatActivity {
             distancesInOrder.add((int)(path.getWeight()));
         }
 
+        // Setting up recycler view
         adapter = new PlanListAdapter(planList);
         adapter.setHasStableIds(true);
 
@@ -109,9 +123,11 @@ public class PlanActivity extends AppCompatActivity {
                 new DividerItemDecoration(planRecyclerView.getContext(),layoutManager.getOrientation());
         planRecyclerView.addItemDecoration(dividerItemDecoration);
 
+        // Set up directions button
         directionsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Pass in information to DirectionsActivity
                 visitAnimalIntent.putExtra("animal_order", animalsInOrder);
                 visitAnimalIntent.putExtra("full_directions", fullDirections);
                 visitAnimalIntent.putExtra("distances", distancesInOrder);
@@ -119,25 +135,29 @@ public class PlanActivity extends AppCompatActivity {
             }
         });
 
-
-        // The list fullDirections will contain the entire path from entrance to exit to each of the
-        // planned animals and then back to the entrance
-        // The i-th element of fullDirections will be the directions to the i-th planned animal
-        // from the i-1th animal.
-
-
-
     }
 
-    // This method finds the order of vertexes that the user should visit
+    /**
+     * This method finds the order of vertexes that the user should visit.
+     * @param plannedAnimals List of animals that the user wants to visit.
+     * @param g The graph
+     * @param start The starting vertex
+     * @param goal The last vertex
+     * @return The first list of the pair is the list of directions to get to the i-th animal and
+     * the second list is the list of the names of the i-th animal.
+     */
     public Pair<List<GraphPath<String, IdentifiedWeightedEdge>>,List<String>>
                             shortestPath(ArrayList<String> plannedAnimals,
                                          Graph<String, IdentifiedWeightedEdge> g,
                                          String start, String goal) {
-
+        // List of exhibits we visit in order
         List<String> visited = new ArrayList<>();
+        // List of directions to get to the i-th exhibit
         List<GraphPath<String, IdentifiedWeightedEdge>> truePath  = new ArrayList<>();
         visited.add(start);
+        // Basically run dijkstra's algorithm algorithm for each vertex. Visit the vertex with the
+        // shortest distance to the current vertex, and then remove it from the list. Continue until
+        // the list is empty. Total runtime is O(n^3log(n))
         while(plannedAnimals.size() > 0) {
             List<Integer> possiblePathLengths = new ArrayList<>();
             List<String> possiblePaths = new ArrayList<>();
@@ -165,29 +185,45 @@ public class PlanActivity extends AppCompatActivity {
             visited.add(goal2);
         }
 
+        // Adds the final destination to the list, usually the entrance/exit gate
         truePath.add(shortestPathHelper(start, goal, g));
         visited.add(goal);
 
         return new Pair<>(truePath, visited);
     }
 
+    /**
+     * This method finds the shortest path between two vertices using Dijkstra's algorithm.
+     * @param start The starting vertex
+     * @param goal The last vertex
+     * @param g The graph
+     * @return The path between the two vertices.
+     */
     private GraphPath<String, IdentifiedWeightedEdge> shortestPathHelper(String start, String goal,
                                     Graph<String, IdentifiedWeightedEdge> g) {
         GraphPath<String, IdentifiedWeightedEdge> path =
                 DijkstraShortestPath.findPathBetween(g, start, goal);
-
         return path;
     }
 
+    /**
+     * This method converts the graph path to directions a user can follow.
+     * @param g The graph
+     * @param path The path
+     * @param start The starting vertex
+     * @param goal The last vertex
+     * @return The directions to follow
+     */
     public String directions(Graph<String, IdentifiedWeightedEdge> g,
                                    GraphPath<String, IdentifiedWeightedEdge> path,
                                    String start, String goal) {
-
+        // List of directions to get to the vertex
         StringBuilder sb = new StringBuilder();
 //        sb.append("The shortest path from " +
 //                animalIdToName.get(start) + " to " +
 //                animalIdToName.get(goal) + " is:\n");
 
+        // Loads graph info
         Map<String, ZooData.VertexInfo> vInfo =
                 ZooData.loadVertexInfoJSON(this, "sample_node_info.json");
         Map<String, ZooData.EdgeInfo> eInfo =
@@ -223,6 +259,13 @@ public class PlanActivity extends AppCompatActivity {
 
         return sb.toString();
     }
+
+    /**
+     * This method finds the weight of the path between two vertices.
+     * @param g The graph
+     * @param path The path between the two vertices
+     * @return The weight of the path.
+     */
     public int pathLength(Graph<String, IdentifiedWeightedEdge> g,
                           GraphPath<String, IdentifiedWeightedEdge> path) {
         int length = 0;
@@ -232,6 +275,4 @@ public class PlanActivity extends AppCompatActivity {
 
         return length;
     }
-
-
 }

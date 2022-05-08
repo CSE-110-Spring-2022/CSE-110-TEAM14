@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+// Pretty standard Adapter class for the recycler view which has a bunch of setters and getters
 public class DirectionListAdapter extends RecyclerView.Adapter<DirectionListAdapter.ViewHolder> {
     List<String> directions;
     public DirectionListAdapter(List<String> directions) {

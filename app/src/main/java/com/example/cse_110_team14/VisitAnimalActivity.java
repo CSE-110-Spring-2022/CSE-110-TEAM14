@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+// This is where you get directions
 public class VisitAnimalActivity extends AppCompatActivity {
 
     public RecyclerView recyclerView;
@@ -26,6 +27,7 @@ public class VisitAnimalActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_visit_animal);
 
+        // Getting the directions, animal name, and distances from the previous activity
         ArrayList<String> fullDirections =
                 getIntent().getStringArrayListExtra("full_directions");
         ArrayList<String> animalsInOrder =
@@ -33,16 +35,20 @@ public class VisitAnimalActivity extends AppCompatActivity {
         ArrayList<Integer> distancesInOrder =
                 getIntent().getIntegerArrayListExtra("distances");
 
-
+        Log.d("VisitAnimalActivity", "fullDirections: " + fullDirections);
+        Log.d("VisitAnimalActivity", "animalsInOrder: " + animalsInOrder);
+        Log.d("VisitAnimalActivity", "distancesInOrder: " + distancesInOrder);
         nextButton = findViewById(R.id.nextButton);
         previousButton = findViewById(R.id.previousButton);
         animalName = findViewById(R.id.animalName);
 
+        // Splits the direction by line to show the directions in a recycler view
         List<List<String>> stepByStepDirections = new ArrayList<>();
         for (String s : fullDirections) {
             stepByStepDirections.add(Arrays.asList(s.split("\n")));
         }
 
+        //
         adapter = new DirectionListAdapter(stepByStepDirections.get(0));
         adapter.setHasStableIds(true);
 
@@ -54,6 +60,8 @@ public class VisitAnimalActivity extends AppCompatActivity {
         adapter.setDirections(stepByStepDirections.get(0));
         adapter.notifyDataSetChanged();
 
+
+        // previous button initially disabled
         previousButton.setText("");
         previousButton.setEnabled(false);
         previousButton.setAlpha(.8f);
@@ -64,7 +72,10 @@ public class VisitAnimalActivity extends AppCompatActivity {
         animalName.setText(animalsInOrder.get(currIndex));
 
         previousButton.setOnClickListener(v -> {
+            // decrement the index when the previous button is clicked and changes the nextButton
             currIndex--;
+            Log.d("VisitAnimalActivity", "currIndex: " + animalsInOrder.get(currIndex));
+
             adapter.setDirections(stepByStepDirections.get(currIndex));
             adapter.notifyDataSetChanged();
             animalName.setText(animalsInOrder.get(currIndex));
@@ -74,6 +85,7 @@ public class VisitAnimalActivity extends AppCompatActivity {
                     distancesInOrder.get(currIndex + 1) + " ft)";
             nextButton.setText(temp);
 
+            // if the index is >0, then the previous button is enabled, otherwise it is disabled
             if(currIndex > 0) {
                 temp = "Previous " + animalsInOrder.get(currIndex - 1) + " (" +
                         distancesInOrder.get(currIndex - 1) + " ft)";
@@ -89,7 +101,8 @@ public class VisitAnimalActivity extends AppCompatActivity {
 
         nextButton.setOnClickListener(v -> {
             currIndex++;
-
+            Log.d("VisitAnimalActivity", "currIndex: " + animalsInOrder.get(currIndex));
+            // Sets the previous button
             adapter.setDirections(stepByStepDirections.get(currIndex));
             adapter.notifyDataSetChanged();
             animalName.setText(animalsInOrder.get(currIndex));
@@ -99,6 +112,9 @@ public class VisitAnimalActivity extends AppCompatActivity {
             String temp = "Previous " + animalsInOrder.get(currIndex - 1) +
                     " (" + distancesInOrder.get(currIndex - 1) + " ft)";
             previousButton.setText(temp);
+
+            // If the index is < the size of the list - 1 , then the next button is enabled,
+            // otherwise it is disabled
             if (currIndex < animalsInOrder.size() - 1) {
                 temp = "Next " + animalsInOrder.get(currIndex + 1) + " (" +
                         distancesInOrder.get(currIndex + 1) + " ft)";
