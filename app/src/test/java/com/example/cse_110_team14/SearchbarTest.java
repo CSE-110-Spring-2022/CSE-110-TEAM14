@@ -28,7 +28,7 @@ public class SearchbarTest {
     public ActivityScenarioRule<SearchActivity> scenarioRule =
             new ActivityScenarioRule<>(SearchActivity.class);
 
-    private final static int NUM_ANIMALS = 7;
+    private final static int NUM_ANIMALS = 5;
     @Test
     public void allAnimalsInEmptySearchBar() {
         ActivityScenario<SearchActivity> scenario = scenarioRule.getScenario();
