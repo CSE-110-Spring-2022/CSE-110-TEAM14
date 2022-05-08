@@ -69,6 +69,7 @@ public class SearchActivity extends AppCompatActivity {
         deleteSearchBar = findViewById(R.id.delete_btn);
         planButton = findViewById(R.id.plan_button);
         planButton.setText("Plan(0)");
+        planButton.setEnabled(false);
         noSearchResults = findViewById(R.id.no_search_results);
         noSearchResults.setVisibility(View.INVISIBLE);
 
@@ -123,6 +124,12 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
     public void setPlanCount(int count){
+        if (count == 0) {
+            planButton.setEnabled(false);
+        }
+        else {
+            planButton.setEnabled(true);
+        }
         planButton.setText("Plan(" + count + ")");
     }
 
