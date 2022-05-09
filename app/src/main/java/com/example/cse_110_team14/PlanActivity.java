@@ -37,8 +37,9 @@ public class PlanActivity extends AppCompatActivity {
         Intent visitAnimalIntent = new Intent(this, VisitAnimalActivity.class);
 
         // List of planned animal names
-        ArrayList<String> plannedAnimals =
-                getIntent().getStringArrayListExtra("checked_animals");
+        ArrayList<String> plannedAnimals = new ArrayList<>();
+        if(getIntent().getStringArrayListExtra("checked_animals") != null)
+            plannedAnimals.addAll(getIntent().getStringArrayListExtra("checked_animals"));
 
         Log.d("PlanActivity", "Planned animals: " + plannedAnimals);
         Map<String, ZooData.VertexInfo> animalMap =
@@ -192,6 +193,8 @@ public class PlanActivity extends AppCompatActivity {
         return new Pair<>(truePath, visited);
     }
 
+
+
     /**
      * This method finds the shortest path between two vertices using Dijkstra's algorithm.
      * @param start The starting vertex
@@ -199,7 +202,7 @@ public class PlanActivity extends AppCompatActivity {
      * @param g The graph
      * @return The path between the two vertices.
      */
-    private GraphPath<String, IdentifiedWeightedEdge> shortestPathHelper(String start, String goal,
+    public GraphPath<String, IdentifiedWeightedEdge> shortestPathHelper(String start, String goal,
                                     Graph<String, IdentifiedWeightedEdge> g) {
         GraphPath<String, IdentifiedWeightedEdge> path =
                 DijkstraShortestPath.findPathBetween(g, start, goal);
@@ -275,4 +278,6 @@ public class PlanActivity extends AppCompatActivity {
 
         return length;
     }
+
+
 }
