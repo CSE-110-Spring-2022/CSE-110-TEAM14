@@ -69,7 +69,7 @@ public class SearchActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
         searchBar = findViewById(R.id.search_text);
-        deleteSearchBar = findViewById(R.id.delete_btn);
+        deleteSearchBar = findViewById(R.id.delete_btn); //It's a button
         planButton = findViewById(R.id.plan_button);
         planButton.setText("Plan(0)");
         planButton.setEnabled(false);

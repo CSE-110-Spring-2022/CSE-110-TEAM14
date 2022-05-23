@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -126,6 +127,12 @@ public class VisitAnimalActivity extends AppCompatActivity {
                 nextButton.setAlpha(.8f);
             }
         });
+
+
+    }
+
+    // This method is called when you press the settings button
+    public void clickNew(View view) {
 
 
     }
