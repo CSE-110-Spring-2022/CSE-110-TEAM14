@@ -28,7 +28,7 @@ public class SearchbarTest {
     public ActivityScenarioRule<SearchActivity> scenarioRule =
             new ActivityScenarioRule<>(SearchActivity.class);
 
-    private final static int NUM_ANIMALS = 5;
+    private final static int NUM_ANIMALS = 14;
     @Test
     public void allAnimalsInEmptySearchBar() {
         ActivityScenario<SearchActivity> scenario = scenarioRule.getScenario();
@@ -57,9 +57,9 @@ public class SearchbarTest {
 
         scenario.onActivity(activity -> {
             List<ZooData.VertexInfo> filteredList =
-                    activity.filter(new SpannableStringBuilder("Elephant"));
-            assertEquals(filteredList.size(), 1);
-            assertEquals(filteredList.get(0).name, "Elephant Odyssey");
+                    activity.filter(new SpannableStringBuilder("Bird"));
+            assertEquals(filteredList.size(), 6);
+            assertEquals(filteredList.get(0).name, "Bali Mynah");
 
 
         });
