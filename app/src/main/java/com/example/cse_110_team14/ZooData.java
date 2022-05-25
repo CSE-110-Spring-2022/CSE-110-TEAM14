@@ -28,7 +28,7 @@ public class ZooData {
             @SerializedName("gate") GATE,
             @SerializedName("exhibit") EXHIBIT,
             @SerializedName("intersection") INTERSECTION,
-            @SerializedName("exhibit_group") EXHIBIT_GROUP,
+            @SerializedName("exhibit_group") EXHIBIT_GROUP
         }
 
 
@@ -71,12 +71,6 @@ public class ZooData {
             }.getType();
             List<ZooData.VertexInfo> zooData = gson.fromJson(reader, type);
 
-            // This code is equivalent to:
-            // Map<String, ZooData.VertexInfo> indexedZooData = new HashMap();
-            // for (ZooData.VertexInfo datum : zooData) {
-            //   indexedZooData[datum.id] = datum;
-            // }
-            //
             Map<String, ZooData.VertexInfo> indexedZooData = zooData
                     .stream()
                     .collect(Collectors.toMap(v -> v.id, datum -> datum));

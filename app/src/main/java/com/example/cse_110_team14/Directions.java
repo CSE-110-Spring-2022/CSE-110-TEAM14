@@ -64,12 +64,14 @@ public class Directions {
                                                  animalIdToName,
                                             Map<String, ZooData.VertexInfo> vInfo,
                                             Map<String, ZooData.EdgeInfo> eInfo){
+
         if(path.getEdgeList().size() == 0) {
             return "No path found";
         }
         StringBuilder sb = new StringBuilder();
         int i = 1;
         // eInfo.get(e.getId()).street
+
         String currentSt = eInfo.get(path.getEdgeList().get(0).getId()).street;
         String curr = animalIdToName.get(start);
         int dist = 0;
