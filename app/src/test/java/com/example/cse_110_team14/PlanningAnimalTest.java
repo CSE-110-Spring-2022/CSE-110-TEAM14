@@ -43,12 +43,12 @@ public class PlanningAnimalTest {
                     = ZooData.loadZooGraphJSON(activity, "sample_zoo_graph.json");
             ArrayList<String>  plannedAnimals = new ArrayList<String>();
             plannedAnimals.add("gorilla");
-            plannedAnimals.add("alligator");
+            plannedAnimals.add("crocodile");
 
 
             List<String> path = new ArrayList<String>();
             path.add("entrance_exit_gate");
-            path.add("alligator");
+            path.add("crocodile");
             path.add("gorilla");
             path.add("entrance_exit_gate");
             assertEquals(path, activity.shortestPath(plannedAnimals, g,   "entrance_exit_gate", "entrance_exit_gate").second);
@@ -67,7 +67,7 @@ public class PlanningAnimalTest {
                     = ZooData.loadZooGraphJSON(activity, "sample_zoo_graph.json");
 
 
-            assertEquals(210, activity.pathLength(g, activity.shortestPathHelper("entrance_exit_gate", "gorilla", g)));
+            assertEquals(310, activity.pathLength(g, activity.shortestPathHelper("entrance_exit_gate", "gorilla", g)));
         });
     }
 
