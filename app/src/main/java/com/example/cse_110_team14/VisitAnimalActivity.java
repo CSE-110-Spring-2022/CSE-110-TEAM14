@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -116,7 +117,6 @@ public class VisitAnimalActivity extends AppCompatActivity {
                 previousButton.setEnabled(false);
                 previousButton.setAlpha(.8f);
             }
-
         });
 
         nextButton.setOnClickListener(v -> {
@@ -178,5 +178,10 @@ public class VisitAnimalActivity extends AppCompatActivity {
     public void clickNew(View view) {
 
 
+    }
+
+    public void popupActivity(){
+        Intent planIntent = new Intent(this, PopupActivity.class);
+        startActivity(planIntent);
     }
 }
