@@ -36,7 +36,6 @@ public class PlanActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plan);
         Intent visitAnimalIntent = new Intent(this, VisitAnimalActivity.class);
-
         // List of planned animal names
         ArrayList<String> plannedAnimals = new ArrayList<>();
         if(getIntent().getStringArrayListExtra("checked_animals") != null)
@@ -84,6 +83,7 @@ public class PlanActivity extends AppCompatActivity {
                 ZooData.loadVertexInfoJSON(this, "sample_node_info.json");
         Map<String, ZooData.EdgeInfo> eInfo =
                 ZooData.loadEdgeInfoJSON(this, "sample_edge_info.json");
+
         for(int i = 0; i < truePath.size(); i++) {
             GraphPath<String, IdentifiedWeightedEdge> path = truePath.get(i);
             String directions = Directions.detailedDirections(
@@ -97,9 +97,9 @@ public class PlanActivity extends AppCompatActivity {
             briefDirections.add(briefDirection);
         }
 
-        // Displays number of animals to visit
-        planTitle = findViewById(R.id.plan_title);
-        planTitle.setText("Plan(" + plannedAnimals.size() + ")");
+//        // Displays number of animals to visit
+//        planTitle = findViewById(R.id.plan_title);
+//        planTitle.setText("Plan(" + plannedAnimals.size() + ")");
 
 
         // Calculating total distance to display
@@ -217,6 +217,8 @@ public class PlanActivity extends AppCompatActivity {
      */
     public GraphPath<String, IdentifiedWeightedEdge> shortestPathHelper(String start, String goal,
                                     Graph<String, IdentifiedWeightedEdge> g) {
+        System.out.println(g.toString());
+        System.out.println(start + "," + goal);
         GraphPath<String, IdentifiedWeightedEdge> path =
                 DijkstraShortestPath.findPathBetween(g, start, goal);
         return path;
