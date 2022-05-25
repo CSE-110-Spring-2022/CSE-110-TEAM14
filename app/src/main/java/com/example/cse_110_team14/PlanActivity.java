@@ -79,6 +79,13 @@ public class PlanActivity extends AppCompatActivity {
         // List of directions for a user to follow
         ArrayList<String> fullDirections = new ArrayList<>();
 
+<<<<<<< Updated upstream
+=======
+        Map<String, ZooData.VertexInfo> vInfo =
+                ZooData.loadVertexInfoJSON(this, "zoo_node_info.json");
+        Map<String, ZooData.EdgeInfo> eInfo =
+                ZooData.loadEdgeInfoJSON(this, "zoo_edge_info.json");
+>>>>>>> Stashed changes
         for(int i = 0; i < truePath.size(); i++) {
             GraphPath<String, IdentifiedWeightedEdge> path = truePath.get(i);
             String directions = directions(g,path, truePathNames.get(i), truePathNames.get(i+1));
@@ -205,6 +212,8 @@ public class PlanActivity extends AppCompatActivity {
      */
     public GraphPath<String, IdentifiedWeightedEdge> shortestPathHelper(String start, String goal,
                                     Graph<String, IdentifiedWeightedEdge> g) {
+        System.out.println(g.toString());
+        System.out.println(start + "," + goal);
         GraphPath<String, IdentifiedWeightedEdge> path =
                 DijkstraShortestPath.findPathBetween(g, start, goal);
         return path;
