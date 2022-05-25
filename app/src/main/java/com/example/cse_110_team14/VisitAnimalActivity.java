@@ -32,9 +32,13 @@ public class VisitAnimalActivity extends AppCompatActivity {
     public RecyclerView recyclerView;
     public Button nextButton;
     public Button previousButton;
+    public Button skipButton;
     public TextView animalName;
     public DirectionListAdapter adapter;
     public int currIndex = 0;
+    public boolean detailed = true;
+    public List<List<String>> stepByStepDirections = new ArrayList<>();
+    public List<List<String>> stepByStepBriefDirections = new ArrayList<>();
 
     public static final String EXTRA_LISTEN_TO_GPS = "listen_to_gps";
 
@@ -45,7 +49,6 @@ public class VisitAnimalActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_visit_animal);
-
         // Getting the directions, animal name, and distances from the previous activity
         ArrayList<String> fullDirections =
                 getIntent().getStringArrayListExtra("full_directions");
@@ -53,6 +56,8 @@ public class VisitAnimalActivity extends AppCompatActivity {
                 getIntent().getStringArrayListExtra("animal_order");
         ArrayList<Integer> distancesInOrder =
                 getIntent().getIntegerArrayListExtra("distances");
+        ArrayList<String> briefDirections =
+                getIntent().getStringArrayListExtra("brief_directions");
         // Check intent extras for flags.
         var listenToGps = getIntent().getBooleanExtra(EXTRA_LISTEN_TO_GPS, true);
 
@@ -61,12 +66,16 @@ public class VisitAnimalActivity extends AppCompatActivity {
         Log.d("VisitAnimalActivity", "distancesInOrder: " + distancesInOrder);
         nextButton = findViewById(R.id.nextButton);
         previousButton = findViewById(R.id.previousButton);
+        skipButton = findViewById(R.id.skipButton);
         animalName = findViewById(R.id.animalName);
 
         // Splits the direction by line to show the directions in a recycler view
-        List<List<String>> stepByStepDirections = new ArrayList<>();
+
         for (String s : fullDirections) {
             stepByStepDirections.add(Arrays.asList(s.split("\n")));
+        }
+        for (String s: briefDirections) {
+            stepByStepBriefDirections.add(Arrays.asList(s.split("\n")));
         }
 
         //
@@ -88,6 +97,7 @@ public class VisitAnimalActivity extends AppCompatActivity {
         previousButton.setAlpha(.8f);
         String temp1 = "Next " + animalsInOrder.get(currIndex + 1) +
                 " (" + distancesInOrder.get(currIndex + 1) + " ft)";
+        skipButton.setText("Skip\n" + animalsInOrder.get(currIndex));
         nextButton.setText(temp1);
 
         animalName.setText(animalsInOrder.get(currIndex));
@@ -97,8 +107,10 @@ public class VisitAnimalActivity extends AppCompatActivity {
             currIndex--;
             Log.d("VisitAnimalActivity", "currIndex: " + animalsInOrder.get(currIndex));
 
-            adapter.setDirections(stepByStepDirections.get(currIndex));
+            if(detailed) adapter.setDirections(stepByStepDirections.get(currIndex));
+            else adapter.setDirections(stepByStepBriefDirections.get(currIndex));
             adapter.notifyDataSetChanged();
+            skipButton.setText("Skip\n"+animalsInOrder.get(currIndex));
             animalName.setText(animalsInOrder.get(currIndex));
             nextButton.setEnabled(true);
             nextButton.setAlpha(1f);
@@ -123,8 +135,10 @@ public class VisitAnimalActivity extends AppCompatActivity {
             currIndex++;
             Log.d("VisitAnimalActivity", "currIndex: " + animalsInOrder.get(currIndex));
             // Sets the previous button
-            adapter.setDirections(stepByStepDirections.get(currIndex));
+            if(detailed) adapter.setDirections(stepByStepDirections.get(currIndex));
+            else adapter.setDirections(stepByStepBriefDirections.get(currIndex));
             adapter.notifyDataSetChanged();
+            skipButton.setText("Skip\n"+animalsInOrder.get(currIndex));
             animalName.setText(animalsInOrder.get(currIndex));
 
             previousButton.setEnabled(true);
@@ -176,8 +190,16 @@ public class VisitAnimalActivity extends AppCompatActivity {
 
     // This method is called when you press the settings button
     public void clickNew(View view) {
+        detailed = !detailed;
+        if(detailed) {
+            adapter.setDirections(stepByStepDirections.get(currIndex));
+            adapter.notifyDataSetChanged();
 
-
+        }
+        else {
+            adapter.setDirections(stepByStepBriefDirections.get(currIndex));
+            adapter.notifyDataSetChanged();
+        }
     }
 
     public void popupActivity(){
