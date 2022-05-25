@@ -67,6 +67,10 @@ public class Directions {
         StringBuilder sb = new StringBuilder();
         int i = 1;
         // eInfo.get(e.getId()).street
+        if( path.getEdgeList().size() == 0) {
+            return "No path found";
+        }
+
         String currentSt = eInfo.get(path.getEdgeList().get(0).getId()).street;
         String curr = animalIdToName.get(start);
         int dist = 0;
