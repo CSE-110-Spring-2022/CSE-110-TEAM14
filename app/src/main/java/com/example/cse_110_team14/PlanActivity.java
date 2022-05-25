@@ -17,6 +17,7 @@ import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 // This is where you can see the plan you created. It also calculates the route and distances.
@@ -43,7 +44,7 @@ public class PlanActivity extends AppCompatActivity {
 
         Log.d("PlanActivity", "Planned animals: " + plannedAnimals);
         Map<String, ZooData.VertexInfo> animalMap =
-                ZooData.loadVertexInfoJSON(this, "sample_node_info.json");
+                ZooData.loadVertexInfoJSON(this, "zoo_node_info.json");
         // List of ALL animals
         List<ZooData.VertexInfo> animalList = new ArrayList<>(animalMap.values());
 
@@ -61,7 +62,7 @@ public class PlanActivity extends AppCompatActivity {
         }
 
         Graph<String, IdentifiedWeightedEdge> g
-                = ZooData.loadZooGraphJSON(this, "sample_zoo_graph.json");
+                = ZooData.loadZooGraphJSON(this, "zoo_graph.json");
 
 
         // Calculates the shortest path to visit all vertices

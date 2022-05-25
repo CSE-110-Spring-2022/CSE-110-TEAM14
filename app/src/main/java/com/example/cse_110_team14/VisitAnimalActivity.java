@@ -1,11 +1,22 @@
 package com.example.cse_110_team14;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -13,6 +24,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 // This is where you get directions
 public class VisitAnimalActivity extends AppCompatActivity {
@@ -26,6 +38,12 @@ public class VisitAnimalActivity extends AppCompatActivity {
     public boolean detailed = true;
     public List<List<String>> stepByStepDirections = new ArrayList<>();
     public List<List<String>> stepByStepBriefDirections = new ArrayList<>();
+
+    public static final String EXTRA_LISTEN_TO_GPS = "listen_to_gps";
+
+    @VisibleForTesting
+    public VisitExhibitPresenter presenter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +57,9 @@ public class VisitAnimalActivity extends AppCompatActivity {
                 getIntent().getIntegerArrayListExtra("distances");
         ArrayList<String> briefDirections =
                 getIntent().getStringArrayListExtra("brief_directions");
+        // Check intent extras for flags.
+        var listenToGps = getIntent().getBooleanExtra(EXTRA_LISTEN_TO_GPS, true);
+
         Log.d("VisitAnimalActivity", "fullDirections: " + fullDirections);
         Log.d("VisitAnimalActivity", "animalsInOrder: " + animalsInOrder);
         Log.d("VisitAnimalActivity", "distancesInOrder: " + distancesInOrder);
@@ -104,7 +125,6 @@ public class VisitAnimalActivity extends AppCompatActivity {
                 previousButton.setEnabled(false);
                 previousButton.setAlpha(.8f);
             }
-
         });
 
         nextButton.setOnClickListener(v -> {
@@ -136,7 +156,31 @@ public class VisitAnimalActivity extends AppCompatActivity {
             }
         });
 
+        VisitExhibitModel model = new ViewModelProvider(this).get(VisitExhibitModel.class);
+        presenter = new VisitExhibitPresenter(this, model);
+        // If GPS is disabled (such as in a test), don't listen for updates from real GPS.
+        if (listenToGps) setupLocationListener();
+    }
 
+    @SuppressLint("MissingPermission")
+    private void setupLocationListener() {
+        // Permission Checking
+        if (new PermissionChecker(this).ensurePermissions()) return;
+
+        // Connect location listener to the model.
+        var provider = LocationManager.GPS_PROVIDER;
+        var locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        var locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(@NonNull Location location) {
+                var coords = Pair.create(
+                        location.getLatitude(),
+                        location.getLongitude()
+                );
+                presenter.updateLastKnownCoords(coords);
+            }
+        };
+        locationManager.requestLocationUpdates(provider, 0, 0f, locationListener);
     }
 
     // This method is called when you press the settings button
@@ -151,5 +195,10 @@ public class VisitAnimalActivity extends AppCompatActivity {
             adapter.setDirections(stepByStepBriefDirections.get(currIndex));
             adapter.notifyDataSetChanged();
         }
+    }
+
+    public void popupActivity(){
+        Intent planIntent = new Intent(this, PopupActivity.class);
+        startActivity(planIntent);
     }
 }

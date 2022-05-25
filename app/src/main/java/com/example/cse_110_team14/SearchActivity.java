@@ -16,27 +16,23 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
 
 // This is where you can search and select what animals you want to visit.
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends AppCompatActivity{
 
     public RecyclerView recyclerView;
     public EditText searchBar;
     public SearchListAdapter adapter;
-    public List<ZooData.VertexInfo> animalList;
-    public ImageButton deleteSearchBar;
-    public Button planButton;
+    public List<ZooData.VertexInfo> exhibitList;
+    public ImageButton deleteSearchBarBtn;
+    public Button planBtn;
     public TextView noSearchResults;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,39 +40,36 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search);
         Intent planIntent = new Intent(this, PlanActivity.class);
 
-        // Map from animal id to animal object
+        // Map from vertex ids to vertex objects
         Map<String, ZooData.VertexInfo> vertexInfoMap =
-                ZooData.loadVertexInfoJSON(this, "sample_node_info.json");
-
+                ZooData.loadVertexInfoJSON(this, "zoo_node_info.json");
+        //List of vertexes
         List<ZooData.VertexInfo> vertexList = new ArrayList<>(vertexInfoMap.values());
-
-        // List of vertexes
-        animalList = new ArrayList<>();
-
-        // Filters out non-exhibit vertexes
+        // List of exhibits
+        exhibitList = new ArrayList<>();
+        // Filter out non-exhibit vertexes
         for (ZooData.VertexInfo vertex : vertexList) {
             if (vertex.kind.toString().equals("EXHIBIT")) {
-                animalList.add(vertex);
+                exhibitList.add(vertex);
             }
         }
 
-        // Initialize recycler view and plan button
-        adapter = new SearchListAdapter(animalList);
+        //Adapter initialization
+        adapter = new SearchListAdapter(exhibitList);
         adapter.setHasStableIds(true);
+        adapter.setSearchItems(exhibitList);
 
         recyclerView = findViewById(R.id.search_items);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
         searchBar = findViewById(R.id.search_text);
-        deleteSearchBar = findViewById(R.id.delete_btn); //It's a button
-        planButton = findViewById(R.id.plan_button);
-        planButton.setText("Plan(0)");
-        planButton.setEnabled(false);
+        deleteSearchBarBtn = findViewById(R.id.delete_btn);
+        planBtn = findViewById(R.id.plan_button);
+        planBtn.setText("Plan(0)");
+        planBtn.setEnabled(false);
         noSearchResults = findViewById(R.id.no_search_results);
         noSearchResults.setVisibility(View.INVISIBLE);
-
-        adapter.setSearchItems(animalList);
 
         //Add dividers between recyclerView items
         DividerItemDecoration dividerItemDecoration =
@@ -86,7 +79,7 @@ public class SearchActivity extends AppCompatActivity {
         adapter.setSas(new SAStorage(this));
 
         //called when the search bar is being edited
-        planButton.setOnClickListener(new View.OnClickListener(){
+        planBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
                 // Go to next activity and pass the list of animals they want to visit
@@ -116,7 +109,7 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable editable) {
                 // Filters the list of animals based on the search bar
-                Log.d("SearchActivity", animalList.get(0).toString());
+                Log.d("SearchActivity", exhibitList.get(0).toString());
                 filter(editable);
                 adapter.notifyDataSetChanged();
             }
@@ -124,7 +117,7 @@ public class SearchActivity extends AppCompatActivity {
 
         //called when X button is clicked
         //clears the search bar
-        deleteSearchBar.setOnClickListener(new View.OnClickListener() {
+        deleteSearchBarBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 searchBar.setText("");
@@ -134,12 +127,12 @@ public class SearchActivity extends AppCompatActivity {
     public void setPlanCount(int count){
         // Sets the number of animals in the plan
         if (count == 0) {
-            planButton.setEnabled(false);
+            planBtn.setEnabled(false);
         }
         else {
-            planButton.setEnabled(true);
+            planBtn.setEnabled(true);
         }
-        planButton.setText("Plan(" + count + ")");
+        planBtn.setText("Plan(" + count + ")");
     }
 
     //this filters the search items by checking the input string with animals' name and tags
@@ -150,30 +143,26 @@ public class SearchActivity extends AppCompatActivity {
         noSearchResults.setVisibility(View.INVISIBLE);
         recyclerView.setVisibility(View.VISIBLE);
         if (editable.toString().isEmpty() || (editable.toString().trim().equals(""))) {
-            adapter.setSearchItems(animalList);
-            newSearchItems = animalList;
+            adapter.setSearchItems(exhibitList);
+            newSearchItems = exhibitList;
         } else {
             String newText = editable.toString().toLowerCase();
-            for (int i = 0; i < animalList.size(); ++i) {
-                if (animalList.get(i).name.toLowerCase().contains(newText)) {
-                    newSearchItems.add(animalList.get(i));
+            for (int i = 0; i < exhibitList.size(); ++i) {
+                if (exhibitList.get(i).name.toLowerCase().contains(newText)) {
+                    newSearchItems.add(exhibitList.get(i));
                     continue;
                 } else {
-                    for (int jindex = 0; jindex < animalList.get(i).tags.size(); jindex++) {
-                        if (animalList.get(i).tags.get(jindex).equals
+                    for (int jindex = 0; jindex < exhibitList.get(i).tags.size(); jindex++) {
+                        if (exhibitList.get(i).tags.get(jindex).equals
                                 (editable.toString().toLowerCase())) {
-                            newSearchItems.add(animalList.get(i));
+                            newSearchItems.add(exhibitList.get(i));
                         }
                     }
                 }
             }
-//            recyclerView.setAdapter(new SearchListAdapter(newSearchItems));
             adapter.setSearchItems(newSearchItems);
         }
         adapter.notifyDataSetChanged();
-
-        //((SearchListAdapter)recyclerView.getAdapter()).setSas(new SAStorage(this));
-
 
         if (newSearchItems.isEmpty()) {
             displayNoSearchResults();
@@ -184,9 +173,9 @@ public class SearchActivity extends AppCompatActivity {
 
     public List<ZooData.VertexInfo> checkedAnimals() {
         List<ZooData.VertexInfo> checkedAnimals = new ArrayList<>();
-        for (int i = 0; i < animalList.size(); i++) {
-            if (animalList.get(i).checked) {
-                checkedAnimals.add(animalList.get(i));
+        for (int i = 0; i < exhibitList.size(); i++) {
+            if (exhibitList.get(i).checked) {
+                checkedAnimals.add(exhibitList.get(i));
             }
         }
         return checkedAnimals;

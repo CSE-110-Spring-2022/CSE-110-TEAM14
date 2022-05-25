@@ -1,23 +1,17 @@
 package com.example.cse_110_team14;
 
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.ViewHolder> {
     private List<ZooData.VertexInfo> searchItems;
@@ -74,7 +68,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Vi
 
                 if(sas != null) {
                     int count = 0;
-                    for(ZooData.VertexInfo v : sas.sa.animalList)
+                    for(ZooData.VertexInfo v : sas.sa.exhibitList)
                         if(v.checked)
                             count ++;
                     sas.setPlanCount(count);
