@@ -32,6 +32,7 @@ public class VisitAnimalActivity extends AppCompatActivity {
     public RecyclerView recyclerView;
     public Button nextButton;
     public Button previousButton;
+    public Button skipButton;
     public TextView animalName;
     public DirectionListAdapter adapter;
     public int currIndex = 0;
@@ -65,6 +66,7 @@ public class VisitAnimalActivity extends AppCompatActivity {
         Log.d("VisitAnimalActivity", "distancesInOrder: " + distancesInOrder);
         nextButton = findViewById(R.id.nextButton);
         previousButton = findViewById(R.id.previousButton);
+        skipButton = findViewById(R.id.skipButton);
         animalName = findViewById(R.id.animalName);
 
         // Splits the direction by line to show the directions in a recycler view
@@ -95,6 +97,7 @@ public class VisitAnimalActivity extends AppCompatActivity {
         previousButton.setAlpha(.8f);
         String temp1 = "Next " + animalsInOrder.get(currIndex + 1) +
                 " (" + distancesInOrder.get(currIndex + 1) + " ft)";
+        skipButton.setText("Skip\n" + animalsInOrder.get(currIndex));
         nextButton.setText(temp1);
 
         animalName.setText(animalsInOrder.get(currIndex));
@@ -107,6 +110,7 @@ public class VisitAnimalActivity extends AppCompatActivity {
             if(detailed) adapter.setDirections(stepByStepDirections.get(currIndex));
             else adapter.setDirections(stepByStepBriefDirections.get(currIndex));
             adapter.notifyDataSetChanged();
+            skipButton.setText("Skip\n"+animalsInOrder.get(currIndex));
             animalName.setText(animalsInOrder.get(currIndex));
             nextButton.setEnabled(true);
             nextButton.setAlpha(1f);
@@ -134,6 +138,7 @@ public class VisitAnimalActivity extends AppCompatActivity {
             if(detailed) adapter.setDirections(stepByStepDirections.get(currIndex));
             else adapter.setDirections(stepByStepBriefDirections.get(currIndex));
             adapter.notifyDataSetChanged();
+            skipButton.setText("Skip\n"+animalsInOrder.get(currIndex));
             animalName.setText(animalsInOrder.get(currIndex));
 
             previousButton.setEnabled(true);

@@ -82,7 +82,8 @@ public class PlanActivity extends AppCompatActivity {
         Map<String, ZooData.VertexInfo> vInfo =
                 ZooData.loadVertexInfoJSON(this, "sample_node_info.json");
         Map<String, ZooData.EdgeInfo> eInfo =
-                ZooData.loadEdgeInfoJSON(this, "sample_edge_info.json");
+                ZooData.loadEdgeInfoJSON(this, "zoo_edge_info.json");
+
 
         for(int i = 0; i < truePath.size(); i++) {
             GraphPath<String, IdentifiedWeightedEdge> path = truePath.get(i);
