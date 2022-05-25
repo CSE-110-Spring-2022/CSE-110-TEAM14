@@ -14,13 +14,12 @@ public class VisitExhibitModel extends AndroidViewModel {
 
     public VisitExhibitModel(@NonNull Application application) {
         super(application);
-
         lastKnownCoords = new MutableLiveData<>(null);
     }
 
     public void setLastKnownCoords(Pair<Double, Double> coords) {
-        Log.d("coords", "1 "+ coords.first);
-        Log.d("coords", "2" + coords.second);
+        Log.d("setCoords", "Latitude: "+ coords.first);
+        Log.d("setCoords", "Longitude: " + coords.second);
         lastKnownCoords.setValue(coords);
     }
 
