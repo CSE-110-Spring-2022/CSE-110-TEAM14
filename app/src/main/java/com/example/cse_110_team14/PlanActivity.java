@@ -77,12 +77,23 @@ public class PlanActivity extends AppCompatActivity {
 
         // List of directions for a user to follow
         ArrayList<String> fullDirections = new ArrayList<>();
+        ArrayList<String> briefDirections = new ArrayList<>();
 
+        Map<String, ZooData.VertexInfo> vInfo =
+                ZooData.loadVertexInfoJSON(this, "sample_node_info.json");
+        Map<String, ZooData.EdgeInfo> eInfo =
+                ZooData.loadEdgeInfoJSON(this, "sample_edge_info.json");
         for(int i = 0; i < truePath.size(); i++) {
             GraphPath<String, IdentifiedWeightedEdge> path = truePath.get(i);
-            String directions = directions(g,path, truePathNames.get(i), truePathNames.get(i+1));
+            String directions = Directions.detailedDirections(
+                    g,path, truePathNames.get(i), truePathNames.get(i+1)
+            , animalIdToName, vInfo, eInfo);
             Log.d("PlanActivity", directions);
             fullDirections.add(directions);
+            String briefDirection = Directions.briefDirections(
+                    g,path, truePathNames.get(i), truePathNames.get(i+1)
+                    , animalIdToName, vInfo, eInfo);
+            briefDirections.add(briefDirection);
         }
 
         // Displays number of animals to visit
@@ -132,6 +143,7 @@ public class PlanActivity extends AppCompatActivity {
                 visitAnimalIntent.putExtra("animal_order", animalsInOrder);
                 visitAnimalIntent.putExtra("full_directions", fullDirections);
                 visitAnimalIntent.putExtra("distances", distancesInOrder);
+                visitAnimalIntent.putExtra("brief_directions", briefDirections);
                 startActivity(visitAnimalIntent);
             }
         });
@@ -209,59 +221,7 @@ public class PlanActivity extends AppCompatActivity {
         return path;
     }
 
-    /**
-     * This method converts the graph path to directions a user can follow.
-     * @param g The graph
-     * @param path The path
-     * @param start The starting vertex
-     * @param goal The last vertex
-     * @return The directions to follow
-     */
-    public String directions(Graph<String, IdentifiedWeightedEdge> g,
-                                   GraphPath<String, IdentifiedWeightedEdge> path,
-                                   String start, String goal) {
-        // List of directions to get to the vertex
-        StringBuilder sb = new StringBuilder();
-//        sb.append("The shortest path from " +
-//                animalIdToName.get(start) + " to " +
-//                animalIdToName.get(goal) + " is:\n");
 
-        // Loads graph info
-        Map<String, ZooData.VertexInfo> vInfo =
-                ZooData.loadVertexInfoJSON(this, "sample_node_info.json");
-        Map<String, ZooData.EdgeInfo> eInfo =
-                ZooData.loadEdgeInfoJSON(this, "sample_edge_info.json");
-        int i = 1;
-        String currentSt = null;
-        String curr = animalIdToName.get(start);
-        for (IdentifiedWeightedEdge e : path.getEdgeList()) {
-            sb.append(" " + i + ". ");
-            if(eInfo.get(e.getId()).street.equals(currentSt)) {
-                sb.append("Continue on " + eInfo.get(e.getId()).street + " ");
-            }
-            else {
-                sb.append("Proceed on " + eInfo.get(e.getId()).street +" ");
-            }
-            currentSt = eInfo.get(e.getId()).street;
-            String target = vInfo.get(g.getEdgeTarget(e).toString()).name;
-            String source = vInfo.get(g.getEdgeSource(e).toString()).name;
-
-            sb.append((int) g.getEdgeWeight(e) + " ft towards" );
-
-            if(curr.equals(target)) {
-                sb.append(" " + source + ".\n");
-                curr = source;
-            }
-            else {
-                sb.append(" " + target + ".\n");
-                curr = target;
-            }
-
-            i++;
-        }
-
-        return sb.toString();
-    }
 
     /**
      * This method finds the weight of the path between two vertices.

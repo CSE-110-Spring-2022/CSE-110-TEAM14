@@ -23,11 +23,13 @@ public class VisitAnimalActivity extends AppCompatActivity {
     public TextView animalName;
     public DirectionListAdapter adapter;
     public int currIndex = 0;
+    public boolean detailed = true;
+    public List<List<String>> stepByStepDirections = new ArrayList<>();
+    public List<List<String>> stepByStepBriefDirections = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_visit_animal);
-
         // Getting the directions, animal name, and distances from the previous activity
         ArrayList<String> fullDirections =
                 getIntent().getStringArrayListExtra("full_directions");
@@ -35,7 +37,8 @@ public class VisitAnimalActivity extends AppCompatActivity {
                 getIntent().getStringArrayListExtra("animal_order");
         ArrayList<Integer> distancesInOrder =
                 getIntent().getIntegerArrayListExtra("distances");
-
+        ArrayList<String> briefDirections =
+                getIntent().getStringArrayListExtra("brief_directions");
         Log.d("VisitAnimalActivity", "fullDirections: " + fullDirections);
         Log.d("VisitAnimalActivity", "animalsInOrder: " + animalsInOrder);
         Log.d("VisitAnimalActivity", "distancesInOrder: " + distancesInOrder);
@@ -44,9 +47,12 @@ public class VisitAnimalActivity extends AppCompatActivity {
         animalName = findViewById(R.id.animalName);
 
         // Splits the direction by line to show the directions in a recycler view
-        List<List<String>> stepByStepDirections = new ArrayList<>();
+
         for (String s : fullDirections) {
             stepByStepDirections.add(Arrays.asList(s.split("\n")));
+        }
+        for (String s: briefDirections) {
+            stepByStepBriefDirections.add(Arrays.asList(s.split("\n")));
         }
 
         //
@@ -77,7 +83,8 @@ public class VisitAnimalActivity extends AppCompatActivity {
             currIndex--;
             Log.d("VisitAnimalActivity", "currIndex: " + animalsInOrder.get(currIndex));
 
-            adapter.setDirections(stepByStepDirections.get(currIndex));
+            if(detailed) adapter.setDirections(stepByStepDirections.get(currIndex));
+            else adapter.setDirections(stepByStepBriefDirections.get(currIndex));
             adapter.notifyDataSetChanged();
             animalName.setText(animalsInOrder.get(currIndex));
             nextButton.setEnabled(true);
@@ -104,7 +111,8 @@ public class VisitAnimalActivity extends AppCompatActivity {
             currIndex++;
             Log.d("VisitAnimalActivity", "currIndex: " + animalsInOrder.get(currIndex));
             // Sets the previous button
-            adapter.setDirections(stepByStepDirections.get(currIndex));
+            if(detailed) adapter.setDirections(stepByStepDirections.get(currIndex));
+            else adapter.setDirections(stepByStepBriefDirections.get(currIndex));
             adapter.notifyDataSetChanged();
             animalName.setText(animalsInOrder.get(currIndex));
 
@@ -133,7 +141,15 @@ public class VisitAnimalActivity extends AppCompatActivity {
 
     // This method is called when you press the settings button
     public void clickNew(View view) {
+        detailed = !detailed;
+        if(detailed) {
+            adapter.setDirections(stepByStepDirections.get(currIndex));
+            adapter.notifyDataSetChanged();
 
-
+        }
+        else {
+            adapter.setDirections(stepByStepBriefDirections.get(currIndex));
+            adapter.notifyDataSetChanged();
+        }
     }
 }
