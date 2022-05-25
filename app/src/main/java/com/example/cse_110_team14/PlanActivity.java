@@ -31,13 +31,18 @@ public class PlanActivity extends AppCompatActivity {
     public Map<String, String> animalIdToName = new HashMap<>();
     public Map<String, String> animalNameToId = new HashMap<>();
 
+    // List of directions for a user to follow
+    ArrayList<String> fullDirections = new ArrayList<>();
+    ArrayList<String> briefDirections = new ArrayList<>();
+
+    public ArrayList<String> plannedAnimals = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plan);
         Intent visitAnimalIntent = new Intent(this, VisitAnimalActivity.class);
         // List of planned animal names
-        ArrayList<String> plannedAnimals = new ArrayList<>();
         if(getIntent().getStringArrayListExtra("checked_animals") != null)
             plannedAnimals.addAll(getIntent().getStringArrayListExtra("checked_animals"));
 
@@ -75,9 +80,9 @@ public class PlanActivity extends AppCompatActivity {
         List<String> truePathNames = truePathPair.second;
 
 
-        // List of directions for a user to follow
-        ArrayList<String> fullDirections = new ArrayList<>();
-        ArrayList<String> briefDirections = new ArrayList<>();
+//        // List of directions for a user to follow
+//        ArrayList<String> fullDirections = new ArrayList<>();
+//        ArrayList<String> briefDirections = new ArrayList<>();
 
         Map<String, ZooData.VertexInfo> vInfo =
                 ZooData.loadVertexInfoJSON(this, "sample_node_info.json");
