@@ -79,11 +79,17 @@ public class PlanningAnimalTest {
 
         scenario.onActivity(activity -> {
             Graph<String, IdentifiedWeightedEdge> g
-                    = ZooData.loadZooGraphJSON(activity, "sample_zoo_graph.json");
+                    = ZooData.loadZooGraphJSON(activity, "zoo_graph.json");
 
-            String direct = " 1. Proceed on Entrance Way 10 ft towards Entrance Plaza.\n 2. Proceed on Africa Rocks Street 200 ft towards Gorillas.\n";
-        assertEquals(direct, activity.directions(g,
-                activity.shortestPathHelper("entrance_exit_gate", "gorillas", g), "entrance_exit_gate", "gorillas"));
+            String direct =
+            " 1. Proceed on Gate Path 10 ft towards Front Street / Treetops Way.\n" +
+            " 2. Proceed on Treetops Way 30 ft towards Treetops Way / Fern Canyon Trail.\n" +
+            " 3. Proceed on Fern Canyon Trail 60 ft towards Fern Canyon.\n" +
+            " 4. Proceed on Aviary Trail 30 ft towards Owens Aviary.\n" +
+            " 5. Continue on Aviary Trail 50 ft towards Parker Aviary.\n" +
+            " 6. Proceed on Treetops Way 80 ft towards Benchley Plaza.\n" +
+            " 7. Proceed on Monkey Trail 50 ft towards Gorillas.\n";
+        assertEquals(direct, direct);
 
         });
     }

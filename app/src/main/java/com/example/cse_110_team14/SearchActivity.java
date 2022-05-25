@@ -42,7 +42,7 @@ public class SearchActivity extends AppCompatActivity{
 
         // Map from vertex ids to vertex objects
         Map<String, ZooData.VertexInfo> vertexInfoMap =
-                ZooData.loadVertexInfoJSON(this, "sample_node_info.json");
+                ZooData.loadVertexInfoJSON(this, "zoo_node_info.json");
         //List of vertexes
         List<ZooData.VertexInfo> vertexList = new ArrayList<>(vertexInfoMap.values());
         // List of exhibits

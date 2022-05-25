@@ -1,6 +1,7 @@
 package com.example.cse_110_team14;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,7 +27,8 @@ public class ZooData {
             // from the strings in our JSON to this Enum.
             @SerializedName("gate") GATE,
             @SerializedName("exhibit") EXHIBIT,
-            @SerializedName("intersection") INTERSECTION
+            @SerializedName("intersection") INTERSECTION,
+            @SerializedName("exhibit_group") EXHIBIT_GROUP,
         }
 
 
@@ -34,17 +36,23 @@ public class ZooData {
         public String toString() {
             return "VertexInfo{" +
                     "id='" + id + '\'' +
+                    ", parent_id='" + parent_id + '\'' +
                     ", kind=" + kind +
                     ", name='" + name + '\'' +
                     ", tags=" + tags +
+                    ", latitude=" + lat +
+                    ", longitude=" + lng +
                     ", checked=" + checked +
                     '}';
         }
 
         public String id;
+        public String parent_id;
         public Kind kind;
         public String name;
         public List<String> tags;
+        public double lat;
+        public double lng;
         public boolean checked = false;
     }
 
@@ -72,6 +80,10 @@ public class ZooData {
             Map<String, ZooData.VertexInfo> indexedZooData = zooData
                     .stream()
                     .collect(Collectors.toMap(v -> v.id, datum -> datum));
+
+            for (Map.Entry<String,ZooData.VertexInfo> entry: indexedZooData.entrySet()) {
+                Log.d("parseCheck", "" + entry.getKey() + entry.getValue());
+            }
 
             return indexedZooData;
         }
