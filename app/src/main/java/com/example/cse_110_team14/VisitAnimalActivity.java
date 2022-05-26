@@ -24,6 +24,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 // This is where you get directions
@@ -54,6 +55,8 @@ public class VisitAnimalActivity extends AppCompatActivity {
                 getIntent().getStringArrayListExtra("full_directions");
         ArrayList<String> animalsInOrder =
                 getIntent().getStringArrayListExtra("animal_order");
+        ArrayList<String> exhibitIDsInOrder =
+                getIntent().getStringArrayListExtra("exhibit_id_order");
         ArrayList<Integer> distancesInOrder =
                 getIntent().getIntegerArrayListExtra("distances");
         ArrayList<String> briefDirections =
@@ -102,10 +105,22 @@ public class VisitAnimalActivity extends AppCompatActivity {
 
         animalName.setText(animalsInOrder.get(currIndex));
 
+        Map<String, ZooData.VertexInfo> animalMap =
+                ZooData.loadVertexInfoJSON(this, "zoo_node_info.json");
+
+        // List of ALL visiting exhibits
+        List<ZooData.VertexInfo> visitList = new ArrayList<>();
+        for (String exhibitID : exhibitIDsInOrder) {
+            Log.d("errorcheck", "" + exhibitID);
+            visitList.add(animalMap.get(exhibitID));
+        }
+
         previousButton.setOnClickListener(v -> {
             // decrement the index when the previous button is clicked and changes the nextButton
             currIndex--;
             Log.d("VisitAnimalActivity", "currIndex: " + animalsInOrder.get(currIndex));
+            ZooData.VertexInfo currExhibit = animalMap.get(exhibitIDsInOrder.get(currIndex));
+            presenter.updateCurrExhibit(currExhibit);
 
             if(detailed) adapter.setDirections(stepByStepDirections.get(currIndex));
             else adapter.setDirections(stepByStepBriefDirections.get(currIndex));
@@ -134,6 +149,9 @@ public class VisitAnimalActivity extends AppCompatActivity {
         nextButton.setOnClickListener(v -> {
             currIndex++;
             Log.d("VisitAnimalActivity", "currIndex: " + animalsInOrder.get(currIndex));
+            ZooData.VertexInfo currExhibit = animalMap.get(exhibitIDsInOrder.get(currIndex));
+            presenter.updateCurrExhibit(currExhibit);
+
             // Sets the previous button
             if(detailed) adapter.setDirections(stepByStepDirections.get(currIndex));
             else adapter.setDirections(stepByStepBriefDirections.get(currIndex));
@@ -165,6 +183,8 @@ public class VisitAnimalActivity extends AppCompatActivity {
         presenter = new VisitExhibitPresenter(this, model);
         // If GPS is disabled (such as in a test), don't listen for updates from real GPS.
         if (listenToGps) setupLocationListener();
+
+        presenter.updateLatsAndLngs(visitList);
     }
 
     @SuppressLint("MissingPermission")

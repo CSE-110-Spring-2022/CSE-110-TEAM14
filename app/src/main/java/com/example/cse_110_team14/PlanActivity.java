@@ -116,6 +116,7 @@ public class PlanActivity extends AppCompatActivity {
 
         // Keeps track of distances and animals in order
         ArrayList<String> animalsInOrder = new ArrayList<>();
+        ArrayList<String> exhibitIDsInOrder = new ArrayList<>();
         ArrayList<Integer> distancesInOrder = new ArrayList<>();
         for (int i  = 0; i < truePath.size(); ++i) {
             GraphPath<String, IdentifiedWeightedEdge> path = truePath.get(i);
@@ -124,6 +125,7 @@ public class PlanActivity extends AppCompatActivity {
             planPair = new Pair<>(exhibitName, totalPathDistance);
             planList.add(planPair);
             animalsInOrder.add(exhibitName);
+            exhibitIDsInOrder.add(truePathNames.get(i+1));
             distancesInOrder.add((int)(path.getWeight()));
         }
 
@@ -148,6 +150,7 @@ public class PlanActivity extends AppCompatActivity {
             public void onClick(View view) {
                 // Pass in information to DirectionsActivity
                 visitAnimalIntent.putExtra("animal_order", animalsInOrder);
+                visitAnimalIntent.putExtra("exhibit_id_order", exhibitIDsInOrder);
                 visitAnimalIntent.putExtra("full_directions", fullDirections);
                 visitAnimalIntent.putExtra("distances", distancesInOrder);
                 visitAnimalIntent.putExtra("brief_directions", briefDirections);

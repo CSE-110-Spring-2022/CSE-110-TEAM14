@@ -75,6 +75,15 @@ public class ZooData {
                     .stream()
                     .collect(Collectors.toMap(v -> v.id, datum -> datum));
 
+            // for all nodes with a parent, their lats and lngs should be their respective
+            // parent's lat and lng
+            for (Map.Entry<String,ZooData.VertexInfo> entry: indexedZooData.entrySet()) {
+                if (entry.getValue().parent_id != null) {
+                    entry.getValue().lat = indexedZooData.get(entry.getValue().parent_id).lat;
+                    entry.getValue().lng = indexedZooData.get(entry.getValue().parent_id).lng;
+                }
+            }
+
             for (Map.Entry<String,ZooData.VertexInfo> entry: indexedZooData.entrySet()) {
                 Log.d("parseCheck", "" + entry.getKey() + entry.getValue());
             }
