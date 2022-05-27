@@ -37,6 +37,7 @@ public class SearchActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_search);
         Intent planIntent = new Intent(this, PlanActivity.class);
 
@@ -59,6 +60,31 @@ public class SearchActivity extends AppCompatActivity{
         adapter.setHasStableIds(true);
         adapter.setSearchItems(exhibitList);
 
+
+
+
+        ItemsDao itemsDao = ItemsDatabase.getSingleton(this).itemsDao();
+        List<CheckedName> checkedNames = new ArrayList<>();
+        int checkCount = 0;
+        if(itemsDao != null) {
+             try{checkedNames = itemsDao.getAll();}catch(Exception e){}
+
+            for (var an : exhibitList) {
+                boolean found = false;
+                for (var ch : checkedNames) {
+                    if (an.name.equals(ch.name)) {
+                        found = true;
+                        checkCount++;
+                        break;
+                    }
+                }
+                System.out.println(found);
+                an.checked = found;
+            }
+            adapter.itemsDao = itemsDao;
+            adapter.notifyDataSetChanged();
+        }
+
         recyclerView = findViewById(R.id.search_items);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -68,6 +94,10 @@ public class SearchActivity extends AppCompatActivity{
         planBtn = findViewById(R.id.plan_button);
         planBtn.setText("Plan(0)");
         planBtn.setEnabled(false);
+
+        if(checkedNames.size() > 0) {
+            setPlanCount(checkCount);
+        }
         noSearchResults = findViewById(R.id.no_search_results);
         noSearchResults.setVisibility(View.INVISIBLE);
 

@@ -19,6 +19,8 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Vi
 
     public SAStorage sas;
 
+    public ItemsDao itemsDao;
+
     public void setSas(SAStorage sas){this.sas = sas;}
 
     public SearchListAdapter(List<ZooData.VertexInfo> searchItems) {
@@ -63,8 +65,16 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Vi
             this.textView = itemView.findViewById(R.id.search_item_text);
             this.checkBox = itemView.findViewById(R.id.search_item_checkbox);
             this.checkBox.setOnClickListener( view -> {
+
                 searchItem.checked = checkBox.isChecked();
                 Log.d("SearchListAdapter", searchItem.checked + " ");
+                if(itemsDao != null) {
+                    if (checkBox.isChecked()){
+                        try{itemsDao.insert(new CheckedName(searchItem.name));}catch(Exception e){}
+                    }
+                    else
+                        try{itemsDao.delete(searchItem.name);}catch(Exception e){}
+                }
 
                 if(sas != null) {
                     int count = 0;
@@ -72,9 +82,6 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Vi
                         if(v.checked)
                             count ++;
                     sas.setPlanCount(count);
-                }
-                else{
-                    System.out.println("Your sas is null - This shouldn't happen");
                 }
             });
 
