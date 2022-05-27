@@ -48,7 +48,6 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Vi
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.setSearchItem(searchItems.get(position));
         holder.setChecked(searchItems.get(position));
-        System.out.println("position" + position);
     }
 
     @Override
@@ -69,11 +68,13 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Vi
 
                 searchItem.checked = checkBox.isChecked();
                 Log.d("SearchListAdapter", searchItem.checked + " ");
-
-                if(checkBox.isChecked())
-                    itemsDao.insert(new CheckedName(searchItem.name));
-                else
-                    itemsDao.delete(searchItem.name);
+                if(itemsDao != null) {
+                    if (checkBox.isChecked()){
+                        try{itemsDao.insert(new CheckedName(searchItem.name));}catch(Exception e){}
+                    }
+                    else
+                        try{itemsDao.delete(searchItem.name);}catch(Exception e){}
+                }
 
                 if(sas != null) {
                     int count = 0;
@@ -81,9 +82,6 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Vi
                         if(v.checked)
                             count ++;
                     sas.setPlanCount(count);
-                }
-                else{
-                    System.out.println("Your sas is null - This shouldn't happen");
                 }
             });
 

@@ -64,25 +64,26 @@ public class SearchActivity extends AppCompatActivity{
 
 
         ItemsDao itemsDao = ItemsDatabase.getSingleton(this).itemsDao();
-        List<CheckedName> checkedNames = itemsDao.getAll();
-
-
+        List<CheckedName> checkedNames = new ArrayList<>();
         int checkCount = 0;
-        for(var an : exhibitList){
-            boolean found = false;
-            for(var ch : checkedNames) {
-                if (an.name.equals(ch.name)){
-                    found = true;
-                    checkCount ++;
-                    break;
-                }
-            }
-            System.out.println(found);
-            an.checked = found;
-        }
-        adapter.itemsDao = itemsDao;
-        adapter.notifyDataSetChanged();
+        if(itemsDao != null) {
+             try{checkedNames = itemsDao.getAll();}catch(Exception e){}
 
+            for (var an : exhibitList) {
+                boolean found = false;
+                for (var ch : checkedNames) {
+                    if (an.name.equals(ch.name)) {
+                        found = true;
+                        checkCount++;
+                        break;
+                    }
+                }
+                System.out.println(found);
+                an.checked = found;
+            }
+            adapter.itemsDao = itemsDao;
+            adapter.notifyDataSetChanged();
+        }
 
         recyclerView = findViewById(R.id.search_items);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
