@@ -4,6 +4,19 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+import org.json.*;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -12,7 +25,30 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent intent = new Intent(this, SearchActivity.class);
+        String activityName = "";
+        Intent intent = new Intent(this, SearchActivity.class);;
+
+        try {
+            Reader reader = Files.newBufferedReader(Paths.get("app/activityState.json"));
+            JsonObject parser = JsonParser.parseReader(reader).getAsJsonObject();
+            activityName = parser.get("activity").getAsString();
+            Log.d("json", activityName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        if (activityName.equals("SearchActivity")) {
+            intent = new Intent(this, SearchActivity.class);
+        }
+        else if (activityName.equals("PlanActivity")) {
+            intent = new Intent(this, PlanActivity.class);
+        }
+        else if (activityName.equals("VisitAnimalActivity")) {
+            intent = new Intent(this, VisitAnimalActivity.class);
+        }
+
+
         startActivity(intent);
     }
 }
