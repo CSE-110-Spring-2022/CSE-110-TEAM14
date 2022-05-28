@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -59,6 +60,21 @@ public class ZooData {
     public static class EdgeInfo {
         public String id;
         public String street;
+    }
+
+
+    public static String getActivityName(Context context, String path) {
+        try {
+            InputStream is = context.getAssets().open(path);
+            Reader reader = new InputStreamReader(is);
+            Gson gson = new Gson();
+            Type type = new TypeToken<HashMap<String,String>>() {}.getType();
+            HashMap a = gson.fromJson(reader, type);
+            return a.get("activityName").toString();
+        } catch (IOException e) {
+            Log.e("ZooData", "Error reading file: " + path, e);
+            return "";
+        }
     }
 
     public static Map<String, ZooData.VertexInfo> loadVertexInfoJSON(Context context, String path) {

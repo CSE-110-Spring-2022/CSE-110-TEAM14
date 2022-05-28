@@ -28,25 +28,27 @@ public class MainActivity extends AppCompatActivity {
         String activityName = "";
         Intent intent = new Intent(this, SearchActivity.class);;
 
-        try {
-            Reader reader = Files.newBufferedReader(Paths.get("app/activityState.json"));
-            JsonObject parser = JsonParser.parseReader(reader).getAsJsonObject();
-            activityName = parser.get("activity").getAsString();
-            Log.d("json", activityName);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Reader reader = Files.newBufferedReader(Paths.get("app/activityState.json"));
+//            JsonObject parser = JsonParser.parseReader(reader).getAsJsonObject();
+//            activityName = parser.get("activity").getAsString();
+//            Log.d("json", activityName);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        Log.d("test", "please work");
+        Log.d("jsonHelp", ZooData.getActivityName(this,"activityState.json"));
 
-
-        if (activityName.equals("SearchActivity")) {
-            intent = new Intent(this, SearchActivity.class);
-        }
-        else if (activityName.equals("PlanActivity")) {
-            intent = new Intent(this, PlanActivity.class);
-        }
-        else if (activityName.equals("VisitAnimalActivity")) {
-            intent = new Intent(this, VisitAnimalActivity.class);
-        }
+//        if (activityName.equals("SearchActivity")) {
+//            intent = new Intent(this, SearchActivity.class);
+//        }
+//        else if (activityName.equals("PlanActivity")) {
+//            intent = new Intent(this, PlanActivity.class);
+//        }
+//        else if (activityName.equals("VisitAnimalActivity")) {
+//            intent = new Intent(this, VisitAnimalActivity.class);
+//        }
 
 
         startActivity(intent);
