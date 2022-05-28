@@ -41,6 +41,10 @@ public class PlanActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plan);
+
+
+        ActivityData.setActivity(this, "activity.json", "PlanActivity");
+
         Intent visitAnimalIntent = new Intent(this, VisitAnimalActivity.class);
         // List of planned animal names
         if(getIntent().getStringArrayListExtra("checked_animals") != null)

@@ -50,6 +50,9 @@ public class VisitAnimalActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_visit_animal);
+
+        ActivityData.setActivity(this, "activity.json", "VisitAnimalActivity");
+
         // Getting the directions, animal name, and distances from the previous activity
         ArrayList<String> fullDirections =
                 getIntent().getStringArrayListExtra("full_directions");

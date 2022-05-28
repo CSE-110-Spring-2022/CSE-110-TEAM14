@@ -3,6 +3,8 @@ package com.example.cse_110_team14;
 import android.content.Context;
 import android.util.Log;
 
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -63,19 +65,7 @@ public class ZooData {
     }
 
 
-    public static String getActivityName(Context context, String path) {
-        try {
-            InputStream is = context.getAssets().open(path);
-            Reader reader = new InputStreamReader(is);
-            Gson gson = new Gson();
-            Type type = new TypeToken<HashMap<String,String>>() {}.getType();
-            HashMap a = gson.fromJson(reader, type);
-            return a.get("activityName").toString();
-        } catch (IOException e) {
-            Log.e("ZooData", "Error reading file: " + path, e);
-            return "";
-        }
-    }
+
 
     public static Map<String, ZooData.VertexInfo> loadVertexInfoJSON(Context context, String path) {
         try {
