@@ -88,7 +88,6 @@ public class SearchActivity extends AppCompatActivity{
         for (CheckedName name : checkedNames) {
             selectedList.add(name.name);
         }
-        Log.d("checking", "" + checkedNames.get(0).name);
         selectedListAdapter = new SelectedListAdapter(selectedList);
         selectedListAdapter.setHasStableIds(true);
         selectedListAdapter.setSelectedItems(selectedList);
