@@ -173,7 +173,7 @@ public class PlanActivity extends AppCompatActivity {
      * @return The first list of the pair is the list of directions to get to the i-th animal and
      * the second list is the list of the names of the i-th animal.
      */
-    public Pair<List<GraphPath<String, IdentifiedWeightedEdge>>,List<String>>
+    public static Pair<List<GraphPath<String, IdentifiedWeightedEdge>>,List<String>>
                             shortestPath(ArrayList<String> plannedAnimals,
                                          Graph<String, IdentifiedWeightedEdge> g,
                                          String start, String goal) {
@@ -228,8 +228,8 @@ public class PlanActivity extends AppCompatActivity {
      * @param g The graph
      * @return The path between the two vertices.
      */
-    public GraphPath<String, IdentifiedWeightedEdge> shortestPathHelper(String start, String goal,
-                                    Graph<String, IdentifiedWeightedEdge> g) {
+    public static GraphPath<String, IdentifiedWeightedEdge> shortestPathHelper(String start, String goal,
+                                                                               Graph<String, IdentifiedWeightedEdge> g) {
         System.out.println(g.toString());
         System.out.println(start + "," + goal);
         GraphPath<String, IdentifiedWeightedEdge> path =
@@ -245,8 +245,8 @@ public class PlanActivity extends AppCompatActivity {
      * @param path The path between the two vertices
      * @return The weight of the path.
      */
-    public int pathLength(Graph<String, IdentifiedWeightedEdge> g,
-                          GraphPath<String, IdentifiedWeightedEdge> path) {
+    public static int pathLength(Graph<String, IdentifiedWeightedEdge> g,
+                                 GraphPath<String, IdentifiedWeightedEdge> path) {
         int length = 0;
         for (IdentifiedWeightedEdge e : path.getEdgeList()) {
             length += g.getEdgeWeight(e);

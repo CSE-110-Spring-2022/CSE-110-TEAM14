@@ -42,7 +42,7 @@ public class ActivityData {
             Log.d("ActivityData", "file DNE");
         }
 
-        return null;
+        return "";
     }
 
 

@@ -41,6 +41,11 @@ public class DirectionListAdapter extends RecyclerView.Adapter<DirectionListAdap
     }
 
     @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
     public int getItemCount() {
         return directions.size();
     }
