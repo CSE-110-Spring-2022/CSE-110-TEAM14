@@ -35,6 +35,7 @@ public class SearchActivity extends AppCompatActivity{
     public ImageButton deleteSearchBarBtn;
     public Button planBtn;
     public TextView noSearchResults;
+    public TextView noSelectedExhibits;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,11 +109,15 @@ public class SearchActivity extends AppCompatActivity{
         planBtn.setText("Plan(0)");
         planBtn.setEnabled(false);
 
-        if(checkedNames.size() > 0) {
-            setPlanCount(checkCount);
-        }
         noSearchResults = findViewById(R.id.no_search_results);
         noSearchResults.setVisibility(View.INVISIBLE);
+        noSelectedExhibits = findViewById(R.id.no_selected_exhibits);
+        noSelectedExhibits.setVisibility(View.VISIBLE);
+
+        if(checkedNames.size() > 0) {
+            setPlanCount(checkCount);
+            hideNoSelectedExhibits();
+        }
 
         //Add dividers between recyclerView items
         DividerItemDecoration dividerItemDecoration1 =
@@ -188,7 +193,6 @@ public class SearchActivity extends AppCompatActivity{
         // the search bar or tags are displayed
         List<ZooData.VertexInfo> newSearchItems = new ArrayList<>();
         noSearchResults.setVisibility(View.INVISIBLE);
-        searchRecyclerView.setVisibility(View.VISIBLE);
         if (editable.toString().isEmpty() || (editable.toString().trim().equals(""))) {
             searchListAdapter.setSearchItems(exhibitList);
             newSearchItems = exhibitList;
@@ -229,18 +233,38 @@ public class SearchActivity extends AppCompatActivity{
     }
 
     public void displayNoSearchResults() {
-        searchRecyclerView.setVisibility(View.INVISIBLE);
         noSearchResults.setVisibility(View.VISIBLE);
     }
 
-    public void updateSelectedList(ZooData.VertexInfo vertex) {
-        if (selectedList.contains(vertex.name)) {
-            selectedList.remove(vertex.name);
+    public void updateSelectedList(ZooData.VertexInfo exhibit) {
+        if (selectedList.contains(exhibit.name)) {
+            selectedList.remove(exhibit.name);
         }
         else {
-            selectedList.add(vertex.name);
+            selectedList.add(exhibit.name);
         }
         selectedListAdapter.setSelectedItems(selectedList);
+        if (noSelectedExhibits()) {
+            displayNoSelectedExhibits();
+        }
+        else {
+            hideNoSelectedExhibits();
+        }
+    }
+
+    public boolean noSelectedExhibits() {
+        if (selectedList.isEmpty()) {
+            return true;
+        }
+        return false;
+    }
+
+    public void displayNoSelectedExhibits() {
+        noSelectedExhibits.setVisibility(View.VISIBLE);
+    }
+
+    public void hideNoSelectedExhibits() {
+        noSelectedExhibits.setVisibility(View.INVISIBLE);
     }
 
 }

@@ -121,5 +121,17 @@
         android:layout_marginTop="10dp"
         android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/search_text"/>
+        app:layout_constraintTop_toBottomOf="@id/search_text" />
+
+    <TextView
+        android:id="@+id/no_selected_exhibits"
+        android:text="no selected exhibits"
+        android:textSize="16sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/my_list_text" />
 </androidx.constraintlayout.widget.ConstraintLayout>
