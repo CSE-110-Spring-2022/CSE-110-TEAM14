@@ -184,10 +184,10 @@ public class VisitAnimalActivity extends AppCompatActivity {
 
         VisitExhibitModel model = new ViewModelProvider(this).get(VisitExhibitModel.class);
         presenter = new VisitExhibitPresenter(this, model);
+        presenter.updateLatsAndLngs(visitList);
         // If GPS is disabled (such as in a test), don't listen for updates from real GPS.
         if (listenToGps) setupLocationListener();
 
-        presenter.updateLatsAndLngs(visitList);
     }
 
     @SuppressLint("MissingPermission")
