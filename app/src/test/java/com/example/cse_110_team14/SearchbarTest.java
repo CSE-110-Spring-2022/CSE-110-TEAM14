@@ -6,12 +6,8 @@ import org.junit.runner.RunWith;
 
 import static org.junit.Assert.*;
 
-import android.text.Editable;
 import android.text.SpannableStringBuilder;
-import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,7 +15,6 @@ import androidx.test.core.app.ActivityScenario;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(AndroidJUnit4.class)
@@ -73,7 +68,7 @@ public class SearchbarTest {
 
         scenario.onActivity(activity -> {
             EditText searchBar = activity.searchBar;
-            RecyclerView recyclerView = activity.recyclerView;
+            RecyclerView recyclerView = activity.searchRecyclerView;
 
             searchBar.requestFocus();
             searchBar.setText("Gorilla");

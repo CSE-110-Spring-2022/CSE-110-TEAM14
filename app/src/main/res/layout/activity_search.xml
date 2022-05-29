@@ -12,58 +12,101 @@
         android:id="@+id/search_items"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginBottom="5dp"
-        app:layout_constraintBottom_toTopOf="@id/plan_button"
+        android:layout_margin="5dp"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toTopOf="@id/my_list_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/search_text" />
+        app:layout_constraintTop_toBottomOf="@id/search_text"
+        android:background="@drawable/border" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/selected_items"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="5dp"
+        android:background="@drawable/border"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toTopOf="@id/plan_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.444"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/my_list_text" />
 
     <EditText
         android:id="@+id/search_text"
         android:layout_width="0dp"
         android:layout_height="48dp"
+        android:layout_marginTop="5dp"
         android:layout_marginStart="5dp"
+        android:paddingLeft="5dp"
         android:hint="Search"
         android:singleLine="true"
         android:text=""
         app:layout_constraintBottom_toTopOf="@+id/search_items"
-        app:layout_constraintEnd_toStartOf="@id/microphone_btn"
+        app:layout_constraintEnd_toStartOf="@id/delete_btn"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/border" />
 
     <ImageButton
         android:id="@+id/delete_btn"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginEnd="5dp"
+        android:layout_margin="5dp"
         android:clickable="true"
+        android:focusable="true"
         android:gravity="center"
         android:text=""
-        android:background="@android:color/white"
         app:layout_constraintBottom_toTopOf="@+id/search_items"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/microphone_btn"
+        app:layout_constraintStart_toEndOf="@+id/search_text"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/cross"/>
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/cross"
+        android:background="@drawable/border" />
 
-    <ImageButton
-        android:id="@+id/microphone_btn"
-        android:layout_width="48dp"
+    <TextView
+        android:id="@+id/my_list_text"
+        android:layout_width="0dp"
         android:layout_height="48dp"
-        android:background="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/search_items"
-        app:layout_constraintEnd_toStartOf="@id/delete_btn"
-        app:layout_constraintStart_toEndOf="@id/search_text"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/microphone" />
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:paddingLeft="5dp"
+        android:singleLine="true"
+        android:text="My List"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toTopOf="@+id/selected_items"
+        app:layout_constraintEnd_toStartOf="@id/clear_list_btn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/search_items"
+        android:background="@drawable/border" />
+
+    <Button
+        android:id="@+id/clear_list_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginEnd="5dp"
+        android:text="Clear"
+        android:textColor="@color/black"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        app:layout_constraintBottom_toTopOf="@+id/selected_items"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/my_list_text"
+        app:layout_constraintTop_toBottomOf="@id/search_items"
+        app:backgroundTint="@null"
+        android:background="@drawable/border" />
 
     <Button
         android:id="@+id/plan_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
         android:text="Button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -79,5 +122,4 @@
         android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/search_text"/>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
