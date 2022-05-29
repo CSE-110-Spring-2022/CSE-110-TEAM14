@@ -17,7 +17,7 @@ import android.widget.TextView;
 import android.os.Handler;
 
 @RunWith(AndroidJUnit4.class)
-public class SelectedExhibitsTest {
+public class SelectedExhibitTest {
     @Rule
     public ActivityScenarioRule<SearchActivity> scenarioRule =
             new ActivityScenarioRule<>(SearchActivity.class);
