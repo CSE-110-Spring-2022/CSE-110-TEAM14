@@ -55,6 +55,16 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Vi
         return searchItems.size();
     }
 
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView textView;
         private ZooData.VertexInfo searchItem;
@@ -82,6 +92,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Vi
                         if(v.checked)
                             count ++;
                     sas.setPlanCount(count);
+                    sas.updateSelectedList(searchItem);
                 }
             });
 

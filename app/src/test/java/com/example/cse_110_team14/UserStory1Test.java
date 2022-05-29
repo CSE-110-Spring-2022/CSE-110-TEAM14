@@ -27,7 +27,7 @@ public class UserStory1Test {
 
         scenario.onActivity(activity -> {
             EditText searchBar = activity.searchBar;
-            RecyclerView recyclerView = activity.recyclerView;
+            RecyclerView recyclerView = activity.searchRecyclerView;
 
             searchBar.requestFocus();
             searchBar.setText("Gorilla");

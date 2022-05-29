@@ -42,7 +42,7 @@ public class PlanningTest {
         scenario.onActivity(activity -> {
             String buttontext = (String)activity.planBtn.getText();
             // after adding and removing
-            RecyclerView recyclerView = activity.recyclerView;
+            RecyclerView recyclerView = activity.searchRecyclerView;
             RecyclerView.ViewHolder vh = recyclerView.findViewHolderForAdapterPosition(0);
             vh.itemView.findViewById(R.id.search_item_checkbox).performClick();
             buttontext = (String)activity.planBtn.getText();
