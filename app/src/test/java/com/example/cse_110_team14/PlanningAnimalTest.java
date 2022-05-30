@@ -47,13 +47,15 @@ public class PlanningAnimalTest {
             plannedAnimals.add("gorilla");
             plannedAnimals.add("crocodile");
 
-
+            Map<String, ZooData.VertexInfo> vInfo =
+                    ZooData.loadVertexInfoJSON(activity, "zoo_node_info.json");
             List<String> path = new ArrayList<String>();
             path.add("entrance_exit_gate");
             path.add("crocodile");
             path.add("gorilla");
             path.add("entrance_exit_gate");
-            assertEquals(path, activity.shortestPath(plannedAnimals, g,   "entrance_exit_gate", "entrance_exit_gate").second);
+            assertEquals(path, activity.shortestPath(plannedAnimals, g,"entrance_exit_gate",
+                    "entrance_exit_gate", vInfo).second);
 
         });
     }
