@@ -36,8 +36,8 @@ public class VisitAnimalActivity extends AppCompatActivity {
     public Button skipButton;
     public TextView animalName;
     public DirectionListAdapter adapter;
-    public int currIndex = 0;
-    public boolean detailed = true;
+    public int currIndex;
+    public boolean detailed;
     public List<List<String>> stepByStepDirections = new ArrayList<>();
     public List<List<String>> stepByStepBriefDirections = new ArrayList<>();
 
@@ -64,7 +64,14 @@ public class VisitAnimalActivity extends AppCompatActivity {
                 getIntent().getIntegerArrayListExtra("distances");
         ArrayList<String> briefDirections =
                 getIntent().getStringArrayListExtra("brief_directions");
-        // Check intent extras for flags.
+
+
+        String directions = getIntent().getStringExtra("directions");
+        int index = getIntent().getIntExtra("index",0);
+
+        currIndex = index;
+        detailed = directions.equals("detailed");
+
         var listenToGps = getIntent().getBooleanExtra(EXTRA_LISTEN_TO_GPS, true);
 
         Log.d("VisitAnimalActivity", "fullDirections: " + fullDirections);
@@ -93,18 +100,40 @@ public class VisitAnimalActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
 
-        adapter.setDirections(stepByStepDirections.get(0));
-        adapter.notifyDataSetChanged();
+        if(directions.equals("detailed")) {
+            adapter.setDirections(stepByStepDirections.get(index));
+            adapter.notifyDataSetChanged();
+        }
+        else if (directions.equals("brief")) {
+            adapter.setDirections(stepByStepBriefDirections.get(index));
+            adapter.notifyDataSetChanged();
+        }
 
 
-        // previous button initially disabled
-        previousButton.setText("");
-        previousButton.setEnabled(false);
-        previousButton.setAlpha(.8f);
-        String temp1 = "Next " + animalsInOrder.get(currIndex + 1) +
-                " (" + distancesInOrder.get(currIndex + 1) + " ft)";
+        if(index == 0) {
+            // previous button initially disabled
+            previousButton.setText("");
+            previousButton.setEnabled(false);
+            previousButton.setAlpha(.8f);
+        }
+        else{
+            String temp23 = "Previous " + animalsInOrder.get(currIndex - 1) + " (" +
+                    distancesInOrder.get(currIndex - 1) + " ft)";
+            previousButton.setText(temp23);
+        }
+        if(index < animalsInOrder.size() - 1) {
+            String temp = "Next " + animalsInOrder.get(currIndex + 1) + " (" +
+                    distancesInOrder.get(currIndex + 1) + " ft)";
+            nextButton.setText(temp);
+        }
+        else {
+//            nextButton.setText("");
+//            nextButton.setEnabled(false);
+//            nextButton.setAlpha(.8f);
+            nextButton.setText("Finish");
+        }
+
         skipButton.setText("Skip\n" + animalsInOrder.get(currIndex));
-        nextButton.setText(temp1);
 
         animalName.setText(animalsInOrder.get(currIndex));
 
@@ -121,6 +150,7 @@ public class VisitAnimalActivity extends AppCompatActivity {
         previousButton.setOnClickListener(v -> {
             // decrement the index when the previous button is clicked and changes the nextButton
             currIndex--;
+            ActivityData.setDirectionsIndex(this, "index.json", currIndex);
             Log.d("VisitAnimalActivity", "currIndex: " + animalsInOrder.get(currIndex));
             ZooData.VertexInfo currExhibit = animalMap.get(exhibitIDsInOrder.get(currIndex));
             presenter.updateCurrExhibit(currExhibit);
@@ -151,6 +181,10 @@ public class VisitAnimalActivity extends AppCompatActivity {
 
         nextButton.setOnClickListener(v -> {
             currIndex++;
+            if (currIndex == animalsInOrder.size()) {
+                finishVisit();
+            }
+            ActivityData.setDirectionsIndex(this, "index.json", currIndex);
             Log.d("VisitAnimalActivity", "currIndex: " + animalsInOrder.get(currIndex));
             ZooData.VertexInfo currExhibit = animalMap.get(exhibitIDsInOrder.get(currIndex));
             presenter.updateCurrExhibit(currExhibit);
@@ -176,9 +210,7 @@ public class VisitAnimalActivity extends AppCompatActivity {
                nextButton.setText(temp);
             }
             else {
-                nextButton.setText("");
-                nextButton.setEnabled(false);
-                nextButton.setAlpha(.8f);
+                nextButton.setText("Finish");
             }
         });
 
@@ -188,6 +220,17 @@ public class VisitAnimalActivity extends AppCompatActivity {
         // If GPS is disabled (such as in a test), don't listen for updates from real GPS.
         if (listenToGps) setupLocationListener();
 
+    }
+
+    private void finishVisit() {
+        Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        ActivityData.setActivity(this, "activity.json", "SearchActivity");
+        ActivityData.setDirectionsIndex(this, "index.json", 0);
+        ItemsDao itemsDao = ItemsDatabase.getSingleton(this).itemsDao();
+        itemsDao.deleteAll();
+
+        startActivity(intent);
     }
 
     @SuppressLint("MissingPermission")
@@ -216,13 +259,16 @@ public class VisitAnimalActivity extends AppCompatActivity {
         detailed = !detailed;
         if(detailed) {
             adapter.setDirections(stepByStepDirections.get(currIndex));
-            adapter.notifyDataSetChanged();
 
         }
         else {
             adapter.setDirections(stepByStepBriefDirections.get(currIndex));
-            adapter.notifyDataSetChanged();
         }
+
+        ActivityData.setDirections(this, "directions.json",
+                detailed ? "detailed":"brief");
+        adapter.notifyDataSetChanged();
+
     }
 
     public void popupActivity(){

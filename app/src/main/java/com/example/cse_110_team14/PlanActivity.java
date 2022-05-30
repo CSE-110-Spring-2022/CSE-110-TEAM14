@@ -1,5 +1,6 @@
 package com.example.cse_110_team14;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -149,6 +150,9 @@ public class PlanActivity extends AppCompatActivity {
         planRecyclerView.addItemDecoration(dividerItemDecoration);
 
         // Set up directions button
+
+        ActivityData.setDirectionsIndex(this,"index.json",0);
+        String directionsTemp = ActivityData.getDirections(this, "directions.json");
         directionsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -158,6 +162,8 @@ public class PlanActivity extends AppCompatActivity {
                 visitAnimalIntent.putExtra("full_directions", fullDirections);
                 visitAnimalIntent.putExtra("distances", distancesInOrder);
                 visitAnimalIntent.putExtra("brief_directions", briefDirections);
+                visitAnimalIntent.putExtra("directions", directionsTemp);
+                visitAnimalIntent.putExtra("index", 0);
                 startActivity(visitAnimalIntent);
             }
         });

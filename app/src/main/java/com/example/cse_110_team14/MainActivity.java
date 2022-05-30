@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Uncomment this line of code out if u want to go back to search activity since I have not
         // implemented a way to go back to the start yet
-        // ActivityData.setActivity(this, "activity.json", "SearchActivity");
+//        ActivityData.setActivity(this, "activity.json", "SearchActivity");
         String activityName = ActivityData.getActivity(this, "activity.json");
         Intent intent = new Intent(this, SearchActivity.class);;
 
@@ -145,7 +145,12 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("full_directions", fullDirections);
             intent.putExtra("distances", distancesInOrder);
             intent.putExtra("brief_directions", briefDirections);
+            intent.putExtra("directions", ActivityData.getDirections
+                    (this,"directions.json"));
+            intent.putExtra("index", ActivityData.getDirectionsIndex
+                    (this, "index.json"));
         }
+
 
         startActivity(intent);
     }

@@ -20,4 +20,7 @@ public interface ItemsDao {
 
     @Query("DELETE FROM `checked_names` WHERE name = :name")
     void delete(String name);
+
+    @Query("DELETE FROM `checked_names`")
+    void deleteAll();
 }
