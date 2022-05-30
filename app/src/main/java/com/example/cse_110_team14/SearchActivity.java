@@ -192,6 +192,9 @@ public class SearchActivity extends AppCompatActivity{
                 selectedList.clear();
                 selectedListAdapter.setSelectedItems(selectedList);
                 searchBar.setText(searchBar.getText().toString());
+
+                planBtn.setText("Plan(0)");
+                displayNoSelectedExhibits();
             }
         });
     }
