@@ -90,7 +90,7 @@ public class PlanActivity extends AppCompatActivity {
 //        ArrayList<String> briefDirections = new ArrayList<>();
 
         Map<String, ZooData.VertexInfo> vInfo =
-                ZooData.loadVertexInfoJSON(this, "sample_node_info.json");
+                ZooData.loadVertexInfoJSON(this, "zoo_node_info.json");
         Map<String, ZooData.EdgeInfo> eInfo =
                 ZooData.loadEdgeInfoJSON(this, "zoo_edge_info.json");
 
