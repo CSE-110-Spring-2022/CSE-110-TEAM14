@@ -37,7 +37,9 @@ public class DirectionsTest {
         scenario.onActivity(activity -> {
 
             Graph<String, IdentifiedWeightedEdge> g
-                    = ZooData.loadZooGraphJSON(activity, "zoo_graph.json");
+                    = ZooData.loadZooGraphJSON(activity, "zoo_graph.json",
+                    "zoo_node_info.json",
+                    "zoo_edge_info.json");
 
             assertEquals(activity.fullDirections.toString(), "[]");
 

@@ -3,16 +3,14 @@ package com.example.cse_110_team14;
 import android.content.Context;
 import android.util.Log;
 
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
@@ -39,7 +37,7 @@ public class ZooData {
         public String toString() {
             return "VertexInfo{" +
                     "id='" + id + '\'' +
-                    ", parent_id='" + parent_id + '\'' +
+                    ", parent_id='" + group_id + '\'' +
                     ", kind=" + kind +
                     ", name='" + name + '\'' +
                     ", tags=" + tags +
@@ -50,7 +48,7 @@ public class ZooData {
         }
 
         public String id;
-        public String parent_id;
+        public String group_id;
         public Kind kind;
         public String name;
         public List<String> tags;
@@ -84,9 +82,9 @@ public class ZooData {
             // for all nodes with a parent, their lats and lngs should be their respective
             // parent's lat and lng
             for (Map.Entry<String,ZooData.VertexInfo> entry: indexedZooData.entrySet()) {
-                if (entry.getValue().parent_id != null) {
-                    entry.getValue().lat = indexedZooData.get(entry.getValue().parent_id).lat;
-                    entry.getValue().lng = indexedZooData.get(entry.getValue().parent_id).lng;
+                if (entry.getValue().group_id != null) {
+                    entry.getValue().lat = indexedZooData.get(entry.getValue().group_id).lat;
+                    entry.getValue().lng = indexedZooData.get(entry.getValue().group_id).lng;
                 }
             }
 
@@ -125,7 +123,9 @@ public class ZooData {
     }
 
     public static Graph<String, IdentifiedWeightedEdge> loadZooGraphJSON(Context context,
-                                                                         String path) {
+                                                                         String graphPath,
+                                                                         String vertexPath,
+                                                                         String edgePath) {
         // Create an empty graph to populate.
         Graph<String, IdentifiedWeightedEdge> g =
                 new DefaultUndirectedWeightedGraph<>(IdentifiedWeightedEdge.class);
@@ -144,11 +144,55 @@ public class ZooData {
         // On Android, you would use context.getAssets().open(path) here like in Lab 5.
         InputStream inputStream = null;
         try {
-            inputStream = context.getAssets().open(path);
+            inputStream = context.getAssets().open(graphPath);
             Reader reader = new InputStreamReader(inputStream);
+
+            Map<String, EdgeInfo> edgeInfo = loadEdgeInfoJSON(context,
+                    edgePath);
+            Map<String, VertexInfo> vertexInfo = loadVertexInfoJSON(context,
+                    vertexPath);
+            List<VertexInfo> hasParentId = vertexInfo.values().stream()
+                    .filter(v -> v.group_id != null)
+                    .collect(Collectors.toList());
+            List<VertexInfo> exhibits = vertexInfo.values().stream()
+                    .filter(v -> v.kind == VertexInfo.Kind.EXHIBIT_GROUP)
+                    .collect(Collectors.toList());
 
             // And now we just import it!
             importer.importGraph(g, reader);
+
+//            Log.d("exhibits", exhibits.toString());
+//            Log.d("exhibits", hasParentId.toString());
+//            for (VertexInfo v : hasParentId) {
+//                for (VertexInfo parent : exhibits) {
+//                    if (v.group_id.equals(parent.id)) {
+//
+//                        g.addVertex(v.id);
+//                        System.out.println(g.containsVertex(parent.id));
+//                        System.out.println(g.vertexSet());
+//                        for(IdentifiedWeightedEdge e  : g.outgoingEdgesOf(parent.id)) {
+//                            if(e.source().equals(parent.id)) {
+//                                g.addEdge(v.id, e.target());
+//                                IdentifiedWeightedEdge tempE = g.getEdge(v.id,e.target());
+//                                tempE.setId(e.getId());
+//                                g.setEdgeWeight(tempE, e.weight());
+//                            }
+//                            else {
+//                                g.addEdge(e.source(), v.id);
+//                                g.getEdge(v.id,e.source()).setId(e.getId());
+//                                IdentifiedWeightedEdge tempE = g.getEdge(v.id,e.source());
+//                                tempE.setId(e.getId());
+//                                g.setEdgeWeight(tempE, e.weight());
+//                            }
+//                        }
+//
+//                        break;
+//                    }
+//                }
+//            }
+
+
+
 
             return g;
         } catch (IOException e) {

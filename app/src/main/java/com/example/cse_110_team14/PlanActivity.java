@@ -71,28 +71,31 @@ public class PlanActivity extends AppCompatActivity {
         }
 
         Graph<String, IdentifiedWeightedEdge> g
-                = ZooData.loadZooGraphJSON(this, "zoo_graph.json");
+                = ZooData.loadZooGraphJSON(this, "zoo_graph.json",
+                "zoo_node_info.json",
+                "zoo_edge_info.json");
 
+        Log.d("FixDirections", "Graph: " + g);
+        Log.d("FixDirections", "Graph vertices: " + g.vertexSet());
+        Log.d("FixDirections", "Graph edges: " + g.edgeSet());
+        Log.d("FixDirections", "Animal List1: " + animalList);
 
+        Map<String, ZooData.VertexInfo> vInfo =
+                ZooData.loadVertexInfoJSON(this, "zoo_node_info.json");
+        Map<String, ZooData.EdgeInfo> eInfo =
+                ZooData.loadEdgeInfoJSON(this, "zoo_edge_info.json");
+
+        Log.d("Map", "Vertex info: " + vInfo);
         // Calculates the shortest path to visit all vertices
         Pair<List<GraphPath<String, IdentifiedWeightedEdge>>,List<String>> truePathPair =
                 shortestPath(plannedAnimalsIds, g,
-                        "entrance_exit_gate", "entrance_exit_gate");
+                        "entrance_exit_gate", "entrance_exit_gate", vInfo);
 
         // List of paths from one planned animal to another
         List<GraphPath<String, IdentifiedWeightedEdge>> truePath = truePathPair.first;
         // List of animal names in order of visit
         List<String> truePathNames = truePathPair.second;
 
-
-//        // List of directions for a user to follow
-//        ArrayList<String> fullDirections = new ArrayList<>();
-//        ArrayList<String> briefDirections = new ArrayList<>();
-
-        Map<String, ZooData.VertexInfo> vInfo =
-                ZooData.loadVertexInfoJSON(this, "zoo_node_info.json");
-        Map<String, ZooData.EdgeInfo> eInfo =
-                ZooData.loadEdgeInfoJSON(this, "zoo_edge_info.json");
 
 
         for(int i = 0; i < truePath.size(); i++) {
@@ -151,6 +154,7 @@ public class PlanActivity extends AppCompatActivity {
 
         // Set up directions button
 
+
         ActivityData.setDirectionsIndex(this,"index.json",0);
         String directionsTemp = ActivityData.getDirections(this, "directions.json");
         directionsButton.setOnClickListener(new View.OnClickListener() {
@@ -182,7 +186,8 @@ public class PlanActivity extends AppCompatActivity {
     public static Pair<List<GraphPath<String, IdentifiedWeightedEdge>>,List<String>>
                             shortestPath(ArrayList<String> plannedAnimals,
                                          Graph<String, IdentifiedWeightedEdge> g,
-                                         String start, String goal) {
+                                         String start, String goal, Map<String,
+                                            ZooData.VertexInfo> vInfo) {
         // List of exhibits we visit in order
         List<String> visited = new ArrayList<>();
         // List of directions to get to the i-th exhibit
@@ -197,7 +202,7 @@ public class PlanActivity extends AppCompatActivity {
             List<GraphPath<String, IdentifiedWeightedEdge>> possiblePathsList = new ArrayList<>();
             for (int i = 0; i < plannedAnimals.size(); i++) {
                 String goal2 = plannedAnimals.get(i);
-                GraphPath<String, IdentifiedWeightedEdge> path = shortestPathHelper(start, goal2, g);
+                GraphPath<String, IdentifiedWeightedEdge> path = shortestPathHelper(start, goal2, g, vInfo);
                 int length = pathLength(g, path);
                 possiblePathLengths.add(length);
                 possiblePaths.add(goal2);
@@ -219,7 +224,7 @@ public class PlanActivity extends AppCompatActivity {
         }
 
         // Adds the final destination to the list, usually the entrance/exit gate
-        truePath.add(shortestPathHelper(start, goal, g));
+        truePath.add(shortestPathHelper(start, goal, g, vInfo));
         visited.add(goal);
 
         return new Pair<>(truePath, visited);
@@ -235,12 +240,18 @@ public class PlanActivity extends AppCompatActivity {
      * @return The path between the two vertices.
      */
     public static GraphPath<String, IdentifiedWeightedEdge> shortestPathHelper(String start, String goal,
-                                                                               Graph<String, IdentifiedWeightedEdge> g) {
+                                                                               Graph<String, IdentifiedWeightedEdge> g,
+                                                                               Map<String,
+                                                                                       ZooData.VertexInfo> vInfo) {
         System.out.println(g.toString());
         System.out.println(start + "," + goal);
-        GraphPath<String, IdentifiedWeightedEdge> path =
-                DijkstraShortestPath.findPathBetween(g, start, goal);
-        return path;
+        if (vInfo.get(start).group_id != null) {
+            start = vInfo.get(start).group_id;
+        }
+        if (vInfo.get(goal).group_id != null) {
+            goal = vInfo.get(goal).group_id;
+        }
+        return DijkstraShortestPath.findPathBetween(g, start, goal);
     }
 
 

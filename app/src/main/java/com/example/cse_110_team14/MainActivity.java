@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Uncomment this line of code out if u want to go back to search activity since I have not
         // implemented a way to go back to the start yet
-//        ActivityData.setActivity(this, "activity.json", "SearchActivity");
+        ActivityData.setActivity(this, "activity.json", "SearchActivity");
         String activityName = ActivityData.getActivity(this, "activity.json");
         Intent intent = new Intent(this, SearchActivity.class);;
 
@@ -90,17 +90,22 @@ public class MainActivity extends AppCompatActivity {
                 plannedAnimalsIds.add(animalNameToId.get(animal));
             }
             Graph<String, IdentifiedWeightedEdge> g
-                    = ZooData.loadZooGraphJSON(this, "zoo_graph.json");
+                    = ZooData.loadZooGraphJSON(this, "zoo_graph.json",
+                    "zoo_node_info.json",
+                    "zoo_edge_info.json");
 
             ArrayList<String> animalsInOrder = new ArrayList<>();
             ArrayList<String> exhibitIDsInOrder = new ArrayList<>();
             ArrayList<String> fullDirections = new ArrayList<>();
             ArrayList<Integer> distancesInOrder = new ArrayList<>();
             ArrayList<String> briefDirections = new ArrayList<>();
+            Map<String,
+                    ZooData.VertexInfo> vInfo =
+                    ZooData.loadVertexInfoJSON(this, "zoo_node_info.json");
             // Calculates the shortest path to visit all vertices
             Pair<List<GraphPath<String, IdentifiedWeightedEdge>>,List<String>> truePathPair =
                     PlanActivity.shortestPath(plannedAnimalsIds, g,
-                            "entrance_exit_gate", "entrance_exit_gate");
+                            "entrance_exit_gate", "entrance_exit_gate", vInfo);
 
             // List of paths from one planned animal to another
             List<GraphPath<String, IdentifiedWeightedEdge>> truePath = truePathPair.first;
@@ -109,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
             Integer totalPathDistance = 0;
             Pair<String, Integer> planPair;
 
-            Map<String, ZooData.VertexInfo> vInfo =
+            vInfo =
                     ZooData.loadVertexInfoJSON(this, "zoo_node_info.json");
             Map<String, ZooData.EdgeInfo> eInfo =
                     ZooData.loadEdgeInfoJSON(this, "zoo_edge_info.json");
