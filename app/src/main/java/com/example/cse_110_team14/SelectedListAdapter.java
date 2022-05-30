@@ -68,5 +68,7 @@ public class SelectedListAdapter extends RecyclerView.Adapter<SelectedListAdapte
             this.selectedItem = selectedItem;
             this.textView.setText(selectedItem);
         }
+
+        public String getSelectedItem() { return selectedItem; }
     }
 }

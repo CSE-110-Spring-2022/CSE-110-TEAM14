@@ -34,6 +34,7 @@ public class SearchActivity extends AppCompatActivity{
     public List<String> selectedList;
     public ImageButton deleteSearchBarBtn;
     public Button planBtn;
+    public Button clearSelectedListBtn;
     public TextView noSearchResults;
     public TextView noSelectedExhibits;
 
@@ -108,6 +109,7 @@ public class SearchActivity extends AppCompatActivity{
         planBtn = findViewById(R.id.plan_button);
         planBtn.setText("Plan(0)");
         planBtn.setEnabled(false);
+        clearSelectedListBtn = findViewById(R.id.clear_selected_list_btn);
 
         noSearchResults = findViewById(R.id.no_search_results);
         noSearchResults.setVisibility(View.INVISIBLE);
@@ -173,6 +175,23 @@ public class SearchActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 searchBar.setText("");
+            }
+        });
+
+        clearSelectedListBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("sizecheck", ""+exhibitList.size());
+                for (ZooData.VertexInfo exhibit : exhibitList) {
+                    if (exhibit.checked) {
+                        try{itemsDao.delete(exhibit.name);}catch(Exception e){}
+                    }
+                    exhibit.checked = false;
+                }
+                searchListAdapter.setSearchItems(exhibitList);
+                selectedList.clear();
+                selectedListAdapter.setSelectedItems(selectedList);
+                searchBar.setText(searchBar.getText().toString());
             }
         });
     }
