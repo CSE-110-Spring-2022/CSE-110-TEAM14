@@ -10,4 +10,5 @@ public class SAStorage {
     public void setPlanCount(int count){
         sa.setPlanCount(count);
     }
+    public void updateSelectedList(ZooData.VertexInfo vertex) { sa.updateSelectedList(vertex); }
 }

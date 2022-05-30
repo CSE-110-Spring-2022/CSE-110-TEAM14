@@ -11,13 +11,17 @@
         <entry key="..\:/Users/rjaki/Documents/Android/CSE-110-TEAM14/app/src/main/res/layout/search_list_item.xml" value="0.128125" />
         <entry key="..\:/Users/rjaki/Documents/Android/CSE-110-TEAM14/app/src/main/res/layout/visit_animal_item.xml" value="0.264" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2085" />
+        <entry key="app/src/main/res/drawable/border.xml" value="0.2155" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.2085" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_plan.xml" value="0.2419753086419753" />
-        <entry key="app/src/main/res/layout/activity_search.xml" value="0.3198791503906251" />
+        <entry key="app/src/main/res/layout/activity_search.xml" value="0.41882476806640623" />
         <entry key="app/src/main/res/layout/activity_visit_animal.xml" value="0.165" />
+        <entry key="app/src/main/res/layout/border.xml" value="0.30885416666666665" />
         <entry key="app/src/main/res/layout/plan_list_item.xml" value="0.4822097778320311" />
         <entry key="app/src/main/res/layout/search_list_item.xml" value="0.3029891304347826" />
+        <entry key="app/src/main/res/layout/selected_list_item.xml" value="0.5331619262695313" />
+        <entry key="app/src/main/res/layout/visit_animal_item.xml" value="0.3098958333333333" />
       </map>
     </option>
   </component>

@@ -5,10 +5,8 @@ import static org.junit.Assert.assertFalse;
 import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.core.app.ActivityScenario;
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -35,7 +33,7 @@ public class CheckedAnimalTest {
         scenario.moveToState(Lifecycle.State.CREATED);
 
         scenario.onActivity(activity -> {
-            RecyclerView recyclerView = activity.recyclerView;
+            RecyclerView recyclerView = activity.searchRecyclerView;
 
 
             RecyclerView.ViewHolder vh = recyclerView.findViewHolderForAdapterPosition(0);

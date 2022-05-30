@@ -87,6 +87,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Vi
                         if(v.checked)
                             count ++;
                     sas.setPlanCount(count);
+                    sas.updateSelectedList(searchItem);
                 }
             });
 

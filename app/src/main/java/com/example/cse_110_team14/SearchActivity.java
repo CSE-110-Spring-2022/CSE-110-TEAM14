@@ -16,7 +16,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,13 +25,18 @@ import java.util.Objects;
 // This is where you can search and select what animals you want to visit.
 public class SearchActivity extends AppCompatActivity{
 
-    public RecyclerView recyclerView;
+    public RecyclerView searchRecyclerView;
+    public RecyclerView selectedRecyclerView;
     public EditText searchBar;
-    public SearchListAdapter adapter;
+    public SearchListAdapter searchListAdapter;
+    public SelectedListAdapter selectedListAdapter;
     public List<ZooData.VertexInfo> exhibitList;
+    public List<String> selectedList;
     public ImageButton deleteSearchBarBtn;
     public Button planBtn;
+    public Button clearSelectedListBtn;
     public TextView noSearchResults;
+    public TextView noSelectedExhibits;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +60,9 @@ public class SearchActivity extends AppCompatActivity{
         }
 
         //Adapter initialization
-        adapter = new SearchListAdapter(exhibitList);
-        adapter.setHasStableIds(true);
-        adapter.setSearchItems(exhibitList);
-
-
-
+        searchListAdapter = new SearchListAdapter(exhibitList);
+        searchListAdapter.setHasStableIds(true);
+        searchListAdapter.setSearchItems(exhibitList);
 
         ItemsDao itemsDao = ItemsDatabase.getSingleton(this).itemsDao();
         List<CheckedName> checkedNames = new ArrayList<>();
@@ -81,32 +82,55 @@ public class SearchActivity extends AppCompatActivity{
                 System.out.println(found);
                 an.checked = found;
             }
-            adapter.itemsDao = itemsDao;
-            adapter.notifyDataSetChanged();
+            searchListAdapter.itemsDao = itemsDao;
+            searchListAdapter.notifyDataSetChanged();
         }
 
-        recyclerView = findViewById(R.id.search_items);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(adapter);
+        selectedList = new ArrayList<>();
+        for (CheckedName name : checkedNames) {
+            selectedList.add(name.name);
+        }
+        selectedListAdapter = new SelectedListAdapter(selectedList);
+        selectedListAdapter.setHasStableIds(true);
+        selectedListAdapter.setSelectedItems(selectedList);
+
+        searchRecyclerView = findViewById(R.id.search_items);
+        LinearLayoutManager layoutManager1 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        searchRecyclerView.setLayoutManager(layoutManager1);
+        searchRecyclerView.setAdapter(searchListAdapter);
+
+        selectedRecyclerView = findViewById(R.id.selected_items);
+        LinearLayoutManager layoutManager2 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        selectedRecyclerView.setLayoutManager(layoutManager2);
+        selectedRecyclerView.setAdapter(selectedListAdapter);
+
         searchBar = findViewById(R.id.search_text);
         deleteSearchBarBtn = findViewById(R.id.delete_btn);
         planBtn = findViewById(R.id.plan_button);
         planBtn.setText("Plan(0)");
         planBtn.setEnabled(false);
+        clearSelectedListBtn = findViewById(R.id.clear_selected_list_btn);
+
+        noSearchResults = findViewById(R.id.no_search_results);
+        noSearchResults.setVisibility(View.INVISIBLE);
+        noSelectedExhibits = findViewById(R.id.no_selected_exhibits);
+        noSelectedExhibits.setVisibility(View.VISIBLE);
 
         if(checkedNames.size() > 0) {
             setPlanCount(checkCount);
+            hideNoSelectedExhibits();
         }
-        noSearchResults = findViewById(R.id.no_search_results);
-        noSearchResults.setVisibility(View.INVISIBLE);
 
         //Add dividers between recyclerView items
-        DividerItemDecoration dividerItemDecoration =
-                new DividerItemDecoration(recyclerView.getContext(),layoutManager.getOrientation());
-        recyclerView.addItemDecoration(dividerItemDecoration);
+        DividerItemDecoration dividerItemDecoration1 =
+                new DividerItemDecoration(searchRecyclerView.getContext(),layoutManager1.getOrientation());
+        searchRecyclerView.addItemDecoration(dividerItemDecoration1);
 
-        adapter.setSas(new SAStorage(this));
+        DividerItemDecoration dividerItemDecoration2 =
+                new DividerItemDecoration(selectedRecyclerView.getContext(),layoutManager2.getOrientation());
+        selectedRecyclerView.addItemDecoration(dividerItemDecoration2);
+
+        searchListAdapter.setSas(new SAStorage(this));
 
         //called when the search bar is being edited
         planBtn.setOnClickListener(new View.OnClickListener(){
@@ -115,7 +139,7 @@ public class SearchActivity extends AppCompatActivity{
                 // Go to next activity and pass the list of animals they want to visit
                 List<ZooData.VertexInfo> vi_list =
                         ((SearchListAdapter)
-                                Objects.requireNonNull(recyclerView.getAdapter())).searchItemsFull;
+                                Objects.requireNonNull(searchRecyclerView.getAdapter())).searchItemsFull;
                 ArrayList<String> ca_list = new ArrayList<String>();
 
                 for(ZooData.VertexInfo vinfo : vi_list)
@@ -141,7 +165,7 @@ public class SearchActivity extends AppCompatActivity{
                 // Filters the list of animals based on the search bar
                 Log.d("SearchActivity", exhibitList.get(0).toString());
                 filter(editable);
-                adapter.notifyDataSetChanged();
+                searchListAdapter.notifyDataSetChanged();
             }
         });
 
@@ -151,6 +175,26 @@ public class SearchActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 searchBar.setText("");
+            }
+        });
+
+        clearSelectedListBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("sizecheck", ""+exhibitList.size());
+                for (ZooData.VertexInfo exhibit : exhibitList) {
+                    if (exhibit.checked) {
+                        try{itemsDao.delete(exhibit.name);}catch(Exception e){}
+                    }
+                    exhibit.checked = false;
+                }
+                searchListAdapter.setSearchItems(exhibitList);
+                selectedList.clear();
+                selectedListAdapter.setSelectedItems(selectedList);
+                searchBar.setText(searchBar.getText().toString());
+
+                planBtn.setText("Plan(0)");
+                displayNoSelectedExhibits();
             }
         });
     }
@@ -171,9 +215,8 @@ public class SearchActivity extends AppCompatActivity{
         // the search bar or tags are displayed
         List<ZooData.VertexInfo> newSearchItems = new ArrayList<>();
         noSearchResults.setVisibility(View.INVISIBLE);
-        recyclerView.setVisibility(View.VISIBLE);
         if (editable.toString().isEmpty() || (editable.toString().trim().equals(""))) {
-            adapter.setSearchItems(exhibitList);
+            searchListAdapter.setSearchItems(exhibitList);
             newSearchItems = exhibitList;
         } else {
             String newText = editable.toString().toLowerCase();
@@ -190,9 +233,9 @@ public class SearchActivity extends AppCompatActivity{
                     }
                 }
             }
-            adapter.setSearchItems(newSearchItems);
+            searchListAdapter.setSearchItems(newSearchItems);
         }
-        adapter.notifyDataSetChanged();
+        searchListAdapter.notifyDataSetChanged();
 
         if (newSearchItems.isEmpty()) {
             displayNoSearchResults();
@@ -212,7 +255,38 @@ public class SearchActivity extends AppCompatActivity{
     }
 
     public void displayNoSearchResults() {
-        recyclerView.setVisibility(View.INVISIBLE);
         noSearchResults.setVisibility(View.VISIBLE);
     }
+
+    public void updateSelectedList(ZooData.VertexInfo exhibit) {
+        if (selectedList.contains(exhibit.name)) {
+            selectedList.remove(exhibit.name);
+        }
+        else {
+            selectedList.add(exhibit.name);
+        }
+        selectedListAdapter.setSelectedItems(selectedList);
+        if (noSelectedExhibits()) {
+            displayNoSelectedExhibits();
+        }
+        else {
+            hideNoSelectedExhibits();
+        }
+    }
+
+    public boolean noSelectedExhibits() {
+        if (selectedList.isEmpty()) {
+            return true;
+        }
+        return false;
+    }
+
+    public void displayNoSelectedExhibits() {
+        noSelectedExhibits.setVisibility(View.VISIBLE);
+    }
+
+    public void hideNoSelectedExhibits() {
+        noSelectedExhibits.setVisibility(View.INVISIBLE);
+    }
+
 }
