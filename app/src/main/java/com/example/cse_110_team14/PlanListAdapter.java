@@ -41,6 +41,11 @@ public class PlanListAdapter extends RecyclerView.Adapter<PlanListAdapter.ViewHo
     }
 
     @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
     public int getItemCount() {
         return planItems.size();
     }

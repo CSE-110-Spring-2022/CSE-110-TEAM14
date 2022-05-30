@@ -28,4 +28,14 @@ public class IdentifiedWeightedEdge extends DefaultWeightedEdge {
             edge.setId(attrValue);
         }
     }
+    public String source() {
+        return getSource().toString();
+    }
+    public String target() {
+        return getTarget().toString();
+    }
+    public double weight(){
+        return getWeight();
+    }
+
 }

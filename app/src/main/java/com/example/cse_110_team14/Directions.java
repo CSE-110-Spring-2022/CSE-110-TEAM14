@@ -31,6 +31,11 @@ public class Directions {
         String curr = animalIdToName.get(start);
         for (IdentifiedWeightedEdge e : path.getEdgeList()) {
             sb.append(" " + i + ". ");
+            Log.d("Directions1", "Edge: " + e);
+            Log.d("Directions2", "Edge: " + e.getId());
+            Log.d("Directions3", "Edge: " + eInfo.get(e.getId()));
+            Log.d("Directions4", "Edge: " + eInfo.get(e.getId()).street);
+
             if(eInfo.get(e.getId()).street.equals(currentSt)) {
                 sb.append("Continue on " + eInfo.get(e.getId()).street + " ");
             }
@@ -54,7 +59,11 @@ public class Directions {
 
             i++;
         }
-
+        Log.d("Directions", " i forgor: " + vInfo);
+        if (vInfo.get(goal).group_id != null) {
+            sb.append(" " + i + ". Find " + animalIdToName.get(goal)
+                    + " in " + animalIdToName.get(vInfo.get(goal).group_id) + ".\n");
+        }
         return sb.toString();
     }
 
@@ -65,13 +74,18 @@ public class Directions {
                                             Map<String, ZooData.VertexInfo> vInfo,
                                             Map<String, ZooData.EdgeInfo> eInfo){
 
-        if(path.getEdgeList().size() == 0) {
-            return "No path found";
-        }
+
         StringBuilder sb = new StringBuilder();
+
         int i = 1;
         // eInfo.get(e.getId()).street
-
+        if(path.getEdgeList().size() == 0) {
+            if (vInfo.get(goal).group_id != null) {
+                sb.append(" " + i + ". Find " + animalIdToName.get(goal)
+                        + " in " + animalIdToName.get(vInfo.get(goal).group_id) + ".\n");
+            }
+            return  sb.toString();
+        }
         String currentSt = eInfo.get(path.getEdgeList().get(0).getId()).street;
         String curr = animalIdToName.get(start);
         int dist = 0;
@@ -122,7 +136,10 @@ public class Directions {
 
         }
         Log.d("DirectionsBrief", distances.toString());
-
+        if (vInfo.get(goal).group_id != null) {
+            sb.append(" " + i + ". Find " + animalIdToName.get(goal)
+                    + " in " + animalIdToName.get(vInfo.get(goal).group_id) + ".\n");
+        }
         return sb.toString();
     }
 }

@@ -64,7 +64,10 @@ public class VisitExhibitModel extends AndroidViewModel {
     }
 
     public boolean closeToCurrExhibit() {
-        return closeCheck(lastKnownCoords.getValue(), LatsAndLngs.get(currExhibit));
+        if (LatsAndLngs.get(currExhibit) != null) {
+            return closeCheck(lastKnownCoords.getValue(), LatsAndLngs.get(currExhibit));
+        }
+        return true;
     }
 
     public boolean closeTo(Pair<Double,Double> otherCoord)  {

@@ -60,11 +60,6 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Vi
         return position;
     }
 
-    @Override
-    public int getItemViewType(int position) {
-        return position;
-    }
-
     public class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView textView;
         private ZooData.VertexInfo searchItem;

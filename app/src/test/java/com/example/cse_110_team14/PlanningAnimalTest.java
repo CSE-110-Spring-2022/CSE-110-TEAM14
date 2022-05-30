@@ -40,18 +40,22 @@ public class PlanningAnimalTest {
         scenario.onActivity(activity -> {
 
             Graph<String, IdentifiedWeightedEdge> g
-                    = ZooData.loadZooGraphJSON(activity, "sample_zoo_graph.json");
+                    = ZooData.loadZooGraphJSON(activity, "zoo_graph.json",
+                    "zoo_node_info.json",
+                    "zoo_edge_info.json");
             ArrayList<String>  plannedAnimals = new ArrayList<String>();
             plannedAnimals.add("gorilla");
             plannedAnimals.add("crocodile");
 
-
+            Map<String, ZooData.VertexInfo> vInfo =
+                    ZooData.loadVertexInfoJSON(activity, "zoo_node_info.json");
             List<String> path = new ArrayList<String>();
             path.add("entrance_exit_gate");
             path.add("crocodile");
             path.add("gorilla");
             path.add("entrance_exit_gate");
-            assertEquals(path, activity.shortestPath(plannedAnimals, g,   "entrance_exit_gate", "entrance_exit_gate").second);
+            assertEquals(path, activity.shortestPath(plannedAnimals, g,"entrance_exit_gate",
+                    "entrance_exit_gate", vInfo).second);
 
         });
     }
@@ -64,10 +68,13 @@ public class PlanningAnimalTest {
 
         scenario.onActivity(activity -> {
             Graph<String, IdentifiedWeightedEdge> g
-                    = ZooData.loadZooGraphJSON(activity, "sample_zoo_graph.json");
+                    = ZooData.loadZooGraphJSON(activity, "zoo_graph.json",
+                    "zoo_node_info.json",
+                    "zoo_edge_info.json");
 
-
-            assertEquals(310, activity.pathLength(g, activity.shortestPathHelper("entrance_exit_gate", "gorilla", g)));
+            Map<String, ZooData.VertexInfo> vertexInfoMap =
+                    ZooData.loadVertexInfoJSON(activity, "zoo_node_info.json");
+            assertEquals(12400, activity.pathLength(g, activity.shortestPathHelper("entrance_exit_gate", "gorilla", g, vertexInfoMap)));
         });
     }
 
@@ -79,7 +86,9 @@ public class PlanningAnimalTest {
 
         scenario.onActivity(activity -> {
             Graph<String, IdentifiedWeightedEdge> g
-                    = ZooData.loadZooGraphJSON(activity, "zoo_graph.json");
+                    = ZooData.loadZooGraphJSON(activity, "zoo_graph.json",
+                    "zoo_node_info.json",
+                    "zoo_edge_info.json");
 
             String direct =
             " 1. Proceed on Gate Path 10 ft towards Front Street / Treetops Way.\n" +
