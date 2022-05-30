@@ -67,7 +67,7 @@ public class PlanningAnimalTest {
                     = ZooData.loadZooGraphJSON(activity, "zoo_graph.json");
 
 
-            assertEquals(310, activity.pathLength(g, activity.shortestPathHelper("entrance_exit_gate", "gorilla", g)));
+            assertEquals(12400, activity.pathLength(g, activity.shortestPathHelper("entrance_exit_gate", "gorilla", g)));
         });
     }
 
