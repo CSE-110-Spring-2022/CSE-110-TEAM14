@@ -74,10 +74,6 @@ public class PlanActivity extends AppCompatActivity {
                 = ZooData.loadZooGraphJSON(this, "zoo_graph.json");
 
 
-        Log.d("FixDirections", "Graph g: " + g);
-        Log.d("FixDirections", "Graph g.vertexSet(): " + g.vertexSet());
-        Log.d("FixDirections", "Graph g.edgeSet(): " + g.edgeSet());
-        Log.d("FixDirections","AnimalList: " + animalList);
         // Calculates the shortest path to visit all vertices
         Pair<List<GraphPath<String, IdentifiedWeightedEdge>>,List<String>> truePathPair =
                 shortestPath(plannedAnimalsIds, g,
@@ -94,7 +90,7 @@ public class PlanActivity extends AppCompatActivity {
 //        ArrayList<String> briefDirections = new ArrayList<>();
 
         Map<String, ZooData.VertexInfo> vInfo =
-                ZooData.loadVertexInfoJSON(this, "zoo_node_info.json");
+                ZooData.loadVertexInfoJSON(this, "sample_node_info.json");
         Map<String, ZooData.EdgeInfo> eInfo =
                 ZooData.loadEdgeInfoJSON(this, "zoo_edge_info.json");
 

@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Uncomment this line of code out if u want to go back to search activity since I have not
         // implemented a way to go back to the start yet
-        ActivityData.setActivity(this, "activity.json", "SearchActivity");
+//        ActivityData.setActivity(this, "activity.json", "SearchActivity");
         String activityName = ActivityData.getActivity(this, "activity.json");
         Intent intent = new Intent(this, SearchActivity.class);;
 
@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
             Pair<String, Integer> planPair;
 
             Map<String, ZooData.VertexInfo> vInfo =
-                    ZooData.loadVertexInfoJSON(this, "zoo_node_info.json");
+                    ZooData.loadVertexInfoJSON(this, "sample_node_info.json");
             Map<String, ZooData.EdgeInfo> eInfo =
                     ZooData.loadEdgeInfoJSON(this, "zoo_edge_info.json");
 
