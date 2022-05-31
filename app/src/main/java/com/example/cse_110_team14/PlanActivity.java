@@ -96,21 +96,6 @@ public class PlanActivity extends AppCompatActivity {
         // List of animal names in order of visit
         List<String> truePathNames = truePathPair.second;
 
-
-
-        for(int i = 0; i < truePath.size(); i++) {
-            GraphPath<String, IdentifiedWeightedEdge> path = truePath.get(i);
-            String directions = Directions.detailedDirections(
-                    g,path, truePathNames.get(i), truePathNames.get(i+1)
-            , animalIdToName, vInfo, eInfo);
-            Log.d("PlanActivity", directions);
-            fullDirections.add(directions);
-            String briefDirection = Directions.briefDirections(
-                    g,path, truePathNames.get(i), truePathNames.get(i+1)
-                    , animalIdToName, vInfo, eInfo);
-            briefDirections.add(briefDirection);
-        }
-
 //        // Displays number of animals to visit
 //        planTitle = findViewById(R.id.plan_title);
 //        planTitle.setText("Plan(" + plannedAnimals.size() + ")");
