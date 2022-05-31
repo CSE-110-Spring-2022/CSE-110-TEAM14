@@ -30,6 +30,9 @@ import org.jgrapht.GraphPath;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,10 +59,12 @@ public class VisitAnimalActivity extends AppCompatActivity {
 
     public List<String> exhibitIDsInOrder;
     public List<String> animalsInOrder;
+    public boolean offRouteCalled = false;
 
     PermissionChecker permissionChecker;
     LocationManager locationManager;
     LocationListener locationListener;
+    public List<ZooData.VertexInfo> futureExhibits;
 
     public static final String EXTRA_LISTEN_TO_GPS = "listen_to_gps";
 
@@ -81,6 +86,15 @@ public class VisitAnimalActivity extends AppCompatActivity {
 
         // Getting the directions, animal name, and distances from the previous activity
 
+        List<Pair<Integer, String>> distancePairs = new ArrayList<>();
+
+        for(ZooData.VertexInfo info : vInfo.values()) {
+            distancePairs.add(new Pair<>(distance(info.id,"gorilla"), info.name));
+        }
+        Collections.sort(distancePairs, Comparator.comparing(p -> p.first));
+        for(Pair<Integer, String> pair : distancePairs) {
+            Log.d("allDistances", pair.second + " " + pair.first);
+        }
         animalsInOrder =
                 getIntent().getStringArrayListExtra("animal_order");
         exhibitIDsInOrder =
@@ -165,11 +179,12 @@ public class VisitAnimalActivity extends AppCompatActivity {
         VisitExhibitModel model = new ViewModelProvider(this).get(VisitExhibitModel.class);
         presenter = new VisitExhibitPresenter(this, model);
         presenter.updateLatsAndLngs(vertexList);
-        List<ZooData.VertexInfo> futureExhibits = new ArrayList<>();
+        futureExhibits = new ArrayList<>();
         futureExhibits.addAll(visitList);
         presenter.updateCurrExhibitDisplayed(animalMap.get(exhibitIDsInOrder.get(0)), futureExhibits);
 
         previousButton.setOnClickListener(v -> {
+            offRouteCalled = false;
             // decrement the index when the previous button is clicked and changes the nextButton
             currIndex--;
             ActivityData.setDirectionsIndex(this, "index.json", currIndex);
@@ -209,6 +224,7 @@ public class VisitAnimalActivity extends AppCompatActivity {
         });
 
         nextButton.setOnClickListener(v -> {
+            offRouteCalled = false;
             currIndex++;
             if (currIndex == animalsInOrder.size()) {
                 finishVisit();
@@ -265,6 +281,8 @@ public class VisitAnimalActivity extends AppCompatActivity {
         }
 
         skipButton.setOnClickListener(v -> {
+            offRouteCalled = false;
+
             ArrayList<String> visitedAnimals = new ArrayList<>();
             ArrayList<String> visitedIds = new ArrayList<>();
             for (int i = 0; i < currIndex; ++i) {
@@ -379,6 +397,7 @@ public class VisitAnimalActivity extends AppCompatActivity {
                         dialog.cancel();
                     });
             builder.show();
+            Log.d("ClosestVertex is:", getClosestVertex());
         });
 
         reEnableGPSButton.setOnClickListener(v -> {
@@ -431,6 +450,7 @@ public class VisitAnimalActivity extends AppCompatActivity {
         adapter.setDirections(getDirections());
         adapter.notifyDataSetChanged();
 
+
     }
 
     public List<String> getDirections() {
@@ -469,20 +489,129 @@ public class VisitAnimalActivity extends AppCompatActivity {
         return ans;
     }
 
-    public void popupActivity() {
-        Intent planIntent = new Intent(this, PopupActivity.class);
-        startActivity(planIntent);
-    }
-
     public String currentLocation() {
-        return "entrance_exit_gate";
+        return getClosestVertex();
     }
 
     public void offRoutePrompt() {
+        if(offRouteCalled){
+            return;
+        }
+        final TextView replan = new EditText(this);
+        replan.setText("You are off route. Would you like to replan?");
+
+        final LinearLayout layout = new LinearLayout(this);
+        layout.setDividerPadding(8);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.addView(replan);
+
+        var builder = new AlertDialog.Builder(this)
+                .setTitle("Off Route")
+                .setView(layout)
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    replanBackend();
+                    Log.d("offRoute","replanned!");
+                })
+                .setNegativeButton("No", (dialog, which) -> {
+                    Log.d("offRoute","cancelled!");
+                });
+        builder.show();
+        Log.d("offRoutePrompt", "called " + getClosestVertex());
+        offRouteCalled = true;
+    }
+    public void replanBackend(){
+        offRouteCalled = false;
+        Map<String, ZooData.VertexInfo> animalMap =
+                ZooData.loadVertexInfoJSON(this, "zoo_node_info.json");
+        ArrayList<String> visitedAnimals = new ArrayList<>();
+        ArrayList<String> visitedIds = new ArrayList<>();
+        for (int i = 0; i < currIndex; ++i) {
+            visitedAnimals.add(animalsInOrder.get(i));
+            visitedIds.add(exhibitIDsInOrder.get(i));
+        }
+        ArrayList<String> unvisitedAnimals = new ArrayList<>();
+        ArrayList<String> unvisitedIds = new ArrayList<>();
+        for (int i = currIndex; i < animalsInOrder.size() - 1; ++i) {
+            unvisitedAnimals.add(animalsInOrder.get(i));
+            unvisitedIds.add(exhibitIDsInOrder.get(i));
+        }
+        Pair<List<GraphPath<String, IdentifiedWeightedEdge>>, List<String>> truePathPair =
+                PlanActivity.shortestPath(unvisitedIds, g,
+                        currentLocation(), "entrance_exit_gate", vInfo);
+
+        List<String> newOrder = truePathPair.second;
+        Log.d("NewOrder: ", newOrder.toString());
+        for (int i = 1; i < newOrder.size(); ++i) {
+            visitedIds.add(newOrder.get(i));
+            visitedAnimals.add(vInfo.get(newOrder.get(i)).name);
+        }
+        Log.d("NewOrder2: ", visitedIds.toString());
+
+        Log.d("NewOrder2: ", visitedAnimals.toString());
+
+        exhibitIDsInOrder = visitedIds;
+        animalsInOrder = visitedAnimals;
+        ActivityData.setAnimals(this, "animals.json", animalsInOrder);
+        ActivityData.setIds(this, "ids.json", exhibitIDsInOrder);
+        ActivityData.setDirectionsIndex(this, "index.json", currIndex);
+        Log.d("VisitAnimalActivity", "currIndex: " + animalsInOrder.get(currIndex));
+
+        ZooData.VertexInfo currExhibitDisplayed =
+                animalMap.get(exhibitIDsInOrder.get(currIndex));
+        futureExhibits.clear();
+        List<ZooData.VertexInfo> visitList = new ArrayList<>();
+        for (String exhibitID : exhibitIDsInOrder) {
+            Log.d("visitList", "" + exhibitID);
+            visitList.add(animalMap.get(exhibitID));
+        }
+        if ((currIndex + 1) != visitList.size()) {
+            for (int i = currIndex + 1; i < visitList.size(); ++i) {
+                futureExhibits.add(visitList.get(i));
+            }
+        }
+
+        presenter.updateCurrExhibitDisplayed(currExhibitDisplayed, futureExhibits);
+
+        // Sets the previous button
+        adapter.setDirections(getDirections());
+        adapter.notifyDataSetChanged();
+        skipButton.setText("Skip\n" + animalsInOrder.get(currIndex));
+        skipButton.setEnabled(true);
+        skipButton.setAlpha(1f);
+        animalName.setText(animalsInOrder.get(currIndex));
+
+
+        if(currIndex == 0) {
+            previousButton.setText("");
+            previousButton.setEnabled(false);
+            previousButton.setAlpha(.8f);
+        }
+        else {
+            previousButton.setEnabled(true);
+            previousButton.setAlpha(1f);
+            String temp = "Previous " + animalsInOrder.get(currIndex - 1) +
+                    " (" + distance(currentLocation(), exhibitIDsInOrder.get(currIndex - 1))
+                    + " ft)";
+            previousButton.setText(temp);
+        }
+        // If the index is < the size of the list - 1 , then the next button is enabled,
+        // otherwise it is disabled
+        if (currIndex < animalsInOrder.size() - 1) {
+            String temp = "Next " + animalsInOrder.get(currIndex + 1) + " (" +
+                    distance(currentLocation(),exhibitIDsInOrder.get(currIndex + 1)) +
+                    " ft)";
+            nextButton.setText(temp);
+        } else {
+            nextButton.setText("Finish");
+            skipButton.setText("");
+            skipButton.setEnabled(false);
+            skipButton.setAlpha(.8f);
+        }
 
     }
 
     public String getClosestVertex() {
+        if(presenter == null) return "gorilla";
         return presenter.getClosestVertex();
     }
 
@@ -494,7 +623,9 @@ public class VisitAnimalActivity extends AppCompatActivity {
 
 
     public void disableGPS() {
-        locationManager.removeUpdates(locationListener);
+        if(locationManager != null) {
+            locationManager.removeUpdates(locationListener);
+        }
         locationManager = null;
     }
 

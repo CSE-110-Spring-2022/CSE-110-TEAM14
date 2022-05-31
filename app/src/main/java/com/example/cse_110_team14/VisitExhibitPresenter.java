@@ -20,9 +20,14 @@ public class VisitExhibitPresenter {
 
     public void updateLastKnownCoords(Pair<Double, Double> coords) {
         model.setLastKnownCoords(coords);
-        if (model.checkOffRoute()) {
-            activity.offRoutePrompt();
-        };
+        Pair<Boolean, String> result = model.checkOffRoute();
+        if (result.first) {
+            if (activity.animalsInOrder.indexOf(result.second) > activity.currIndex &&
+                    activity.animalsInOrder.indexOf(result.second) !=
+                            activity.animalsInOrder.size() - 1) {
+                activity.offRoutePrompt();
+            }
+        }
     }
 
     public void updateLatsAndLngs(List<ZooData.VertexInfo> exhibitList) {

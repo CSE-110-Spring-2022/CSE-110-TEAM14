@@ -55,27 +55,28 @@ public class VisitExhibitModel extends AndroidViewModel {
         }
     }
 
-    public boolean checkOffRoute() {
+    public Pair<Boolean,String> checkOffRoute() {
         if ((lastKnownCoords == null) || (LatsAndLngs.isEmpty())) {
-            return false;
+            return new Pair<>(false, "");
         }
 
         if (exhibitDisplayedisLast()) {
-            return false;
+            return new Pair<>(false, "");
         }
 
         double distFromLastKnownCoordsToExhibit =
                 getPathLength(lastKnownCoords.getValue(), LatsAndLngs.get(currExhibitDisplayed.id));
         for (ZooData.VertexInfo futureExhibit : futureExhibits) {
             if (getPathLength(lastKnownCoords.getValue(), LatsAndLngs.get(futureExhibit.id)) < distFromLastKnownCoordsToExhibit) {
-                return true;
+                return new Pair<>(true, futureExhibit.name);
             }
         }
 
-        return false;
+        return new Pair<>(false, "");
     }
 
     public double getPathLength(Pair<Double, Double> coord1, Pair<Double, Double> coord2) {
+        Log.e("getPathLength", "Lat1: " + coord1 + ", Lng1: " + coord2);
         var LatDifference = coord1.first - coord2.first;
         var LngDifference = coord1.second - coord2.second;
         return Math.sqrt(Math.pow(LatDifference, 2) + Math.pow(LngDifference, 2));
@@ -87,15 +88,21 @@ public class VisitExhibitModel extends AndroidViewModel {
 
     // returns closest vertex id from last known location
     public String getClosestVertex() {
-        double shortestDistance = Double.MAX_VALUE;
-        String closestVertex = "";
-        for (Map.Entry<String,Pair<Double,Double>> entry : LatsAndLngs.entrySet()) {
-            double entryDistance = getPathLength(lastKnownCoords.getValue(), entry.getValue());
-            if (entryDistance < shortestDistance) {
-                shortestDistance = entryDistance;
-                closestVertex = entry.getKey();
+        try {
+            double shortestDistance = Double.MAX_VALUE;
+            String closestVertex = "";
+            for (Map.Entry<String, Pair<Double, Double>> entry : LatsAndLngs.entrySet()) {
+                double entryDistance = getPathLength(lastKnownCoords.getValue(), entry.getValue());
+                if (entryDistance < shortestDistance) {
+                    shortestDistance = entryDistance;
+                    closestVertex = entry.getKey();
+                }
             }
+            return closestVertex;
         }
-        return closestVertex;
+        catch (Exception e) {
+            Log.d("closest", "Error: " + e.getMessage());
+            return "gorilla";
+        }
     }
 }

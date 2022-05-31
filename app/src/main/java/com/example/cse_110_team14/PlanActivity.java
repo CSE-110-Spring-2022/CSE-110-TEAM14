@@ -89,7 +89,7 @@ public class PlanActivity extends AppCompatActivity {
         // Calculates the shortest path to visit all vertices
         Pair<List<GraphPath<String, IdentifiedWeightedEdge>>,List<String>> truePathPair =
                 shortestPath(plannedAnimalsIds, g,
-                        "entrance_exit_gate", "entrance_exit_gate", vInfo);
+                        "gorilla", "entrance_exit_gate", vInfo);
 
         // List of paths from one planned animal to another
         List<GraphPath<String, IdentifiedWeightedEdge>> truePath = truePathPair.first;
