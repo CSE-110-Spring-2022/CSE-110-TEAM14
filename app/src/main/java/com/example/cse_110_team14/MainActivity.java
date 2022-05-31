@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Uncomment this line of code out if u want to go back to search activity since I have not
         // implemented a way to go back to the start yet
-        ActivityData.setActivity(this, "activity.json", "SearchActivity");
+//        ActivityData.setActivity(this, "activity.json", "SearchActivity");
         String activityName = ActivityData.getActivity(this, "activity.json");
         Intent intent = new Intent(this, SearchActivity.class);;
 
@@ -66,79 +66,29 @@ public class MainActivity extends AppCompatActivity {
         }
 
         else if(activityName.equals("VisitAnimalActivity")) {
-            Log.d("MainActivity", "activityName: " + activityName);
-            ItemsDao itemsDao = ItemsDatabase.getSingleton(this).itemsDao();
-            List<CheckedName> checkedNames = itemsDao.getAll();
-            ArrayList<String> test = new ArrayList<>();
-            for(CheckedName name : checkedNames) {
-                test.add(name.name);
-            }
-            Map<String, String> animalNameToId = new HashMap<>();
-            Map<String, String> animalIdToName = new HashMap<>();
-            Map<String, ZooData.VertexInfo> animalMap =
-                    ZooData.loadVertexInfoJSON(this, "zoo_node_info.json");
-            // List of ALL animals
-            List<ZooData.VertexInfo> animalList = new ArrayList<>(animalMap.values());
 
-            ArrayList<String> plannedAnimalsIds = new ArrayList<>();
-            for (ZooData.VertexInfo animal : animalList) {
-                animalIdToName.put(animal.id, animal.name);
-                animalNameToId.put(animal.name, animal.id);
-            }
-
-            for (String animal : test) {
-                plannedAnimalsIds.add(animalNameToId.get(animal));
-            }
-            Graph<String, IdentifiedWeightedEdge> g
-                    = ZooData.loadZooGraphJSON(this, "zoo_graph.json",
-                    "zoo_node_info.json",
-                    "zoo_edge_info.json");
-
-            ArrayList<String> animalsInOrder = new ArrayList<>();
-            ArrayList<String> exhibitIDsInOrder = new ArrayList<>();
-            ArrayList<String> fullDirections = new ArrayList<>();
-            ArrayList<Integer> distancesInOrder = new ArrayList<>();
-            ArrayList<String> briefDirections = new ArrayList<>();
-            Map<String,
-                    ZooData.VertexInfo> vInfo =
-                    ZooData.loadVertexInfoJSON(this, "zoo_node_info.json");
-            // Calculates the shortest path to visit all vertices
-            Pair<List<GraphPath<String, IdentifiedWeightedEdge>>,List<String>> truePathPair =
-                    PlanActivity.shortestPath(plannedAnimalsIds, g,
-                            "entrance_exit_gate", "entrance_exit_gate", vInfo);
-
-            // List of paths from one planned animal to another
-            List<GraphPath<String, IdentifiedWeightedEdge>> truePath = truePathPair.first;
-            List<String> truePathNames = truePathPair.second;
-            String exhibitName;
-            Integer totalPathDistance = 0;
-            Pair<String, Integer> planPair;
-
-            vInfo =
-                    ZooData.loadVertexInfoJSON(this, "zoo_node_info.json");
-            Map<String, ZooData.EdgeInfo> eInfo =
-                    ZooData.loadEdgeInfoJSON(this, "zoo_edge_info.json");
-
-            for (int i  = 0; i < truePath.size(); ++i) {
-                GraphPath<String, IdentifiedWeightedEdge> path = truePath.get(i);
-                exhibitName = animalIdToName.get(truePathNames.get(i+1));
-                totalPathDistance += (int) path.getWeight();
-                planPair = new Pair<>(exhibitName, totalPathDistance);
-                animalsInOrder.add(exhibitName);
-                exhibitIDsInOrder.add(truePathNames.get(i+1));
-                distancesInOrder.add((int)(path.getWeight()));
-            }
 
             intent = new Intent(this, VisitAnimalActivity.class);
-            intent.putExtra("animal_order", animalsInOrder);
-            intent.putExtra("exhibit_id_order", exhibitIDsInOrder);
-            intent.putExtra("distances", distancesInOrder);
+            intent.putExtra("animal_order", ActivityData.getAnimals(this,
+                    "animals.json"));
+            intent.putExtra("exhibit_id_order", ActivityData.getIds(this,
+                    "ids.json"));
             intent.putExtra("directions", ActivityData.getDirections
                     (this,"directions.json"));
             intent.putExtra("index", ActivityData.getDirectionsIndex
                     (this, "index.json"));
         }
 
+//        List<String> animals = new ArrayList<>();
+//        animals.add("dog");
+//        animals.add("cat");
+//        animals.add("bird");
+//        animals.add("fish");
+//        animals.add("snake");
+//
+//        ActivityData.setIds(this, "ids.json", animals);
+//        List<String> animalsFromFile = ActivityData.getIds(this, "ids.json");
+//        Log.d("MainActivity", "animalsFromFile: " + animalsFromFile.get(0));
 
         startActivity(intent);
     }

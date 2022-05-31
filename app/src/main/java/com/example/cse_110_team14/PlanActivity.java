@@ -141,6 +141,8 @@ public class PlanActivity extends AppCompatActivity {
 
 
         ActivityData.setDirectionsIndex(this,"index.json",0);
+        ActivityData.setAnimals(this, "animals.json", animalsInOrder);
+        ActivityData.setIds(this, "ids.json", exhibitIDsInOrder);
         String directionsTemp = ActivityData.getDirections(this, "directions.json");
         directionsButton.setOnClickListener(new View.OnClickListener() {
             @Override

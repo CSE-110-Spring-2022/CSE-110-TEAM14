@@ -283,6 +283,8 @@ public class VisitAnimalActivity extends AppCompatActivity {
 
             exhibitIDsInOrder = visitedIds;
             animalsInOrder = visitedAnimals;
+            ActivityData.setAnimals(this, "animals.json", animalsInOrder);
+            ActivityData.setIds(this, "ids.json", exhibitIDsInOrder);
 
             ActivityData.setDirectionsIndex(this, "index.json", currIndex);
             Log.d("VisitAnimalActivity", "currIndex: " + animalsInOrder.get(currIndex));
@@ -441,5 +443,6 @@ public class VisitAnimalActivity extends AppCompatActivity {
                 PlanActivity.shortestPathHelper(v1, v2, g, vInfo);
         return (int) a.getWeight();
     }
+
 
 }
