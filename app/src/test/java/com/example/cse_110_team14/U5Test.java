@@ -1,5 +1,6 @@
 package com.example.cse_110_team14;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import androidx.lifecycle.Lifecycle;
@@ -31,6 +32,21 @@ public class U5Test {
             vh.itemView.findViewById(R.id.search_item_checkbox).performClick();
             l = activity.itemsDao.getAll();
             assert(l.isEmpty());
+        });
+    }
+
+    @Test
+    public void testActivityRetention(){
+        ActivityScenario<PlanActivity> scenario = ActivityScenario.launch(PlanActivity.class);
+        scenario.moveToState(Lifecycle.State.CREATED);
+        scenario.moveToState(Lifecycle.State.DESTROYED);
+
+        ActivityScenario<MainActivity> newscen = ActivityScenario.launch(MainActivity.class);
+        newscen.moveToState(Lifecycle.State.CREATED);
+
+        newscen.onActivity(activity -> {
+            String name = ActivityData.getActivity(activity.getApplicationContext(), "activity.json");
+            assertEquals(name, "PlanActivity");
         });
     }
 
