@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 // This is where you get directions
 public class VisitAnimalActivity extends AppCompatActivity {
@@ -147,13 +146,27 @@ public class VisitAnimalActivity extends AppCompatActivity {
             visitList.add(animalMap.get(exhibitID));
         }
 
+        VisitExhibitModel model = new ViewModelProvider(this).get(VisitExhibitModel.class);
+        presenter = new VisitExhibitPresenter(this, model);
+        presenter.updateLatsAndLngs(visitList);
+
+        List<ZooData.VertexInfo> futureExhibits = new ArrayList<>();
+        futureExhibits.addAll(futureExhibits);
+        presenter.updateCurrExhibitDisplayed(animalMap.get(exhibitIDsInOrder.get(0)), futureExhibits);
+
         previousButton.setOnClickListener(v -> {
             // decrement the index when the previous button is clicked and changes the nextButton
             currIndex--;
             ActivityData.setDirectionsIndex(this, "index.json", currIndex);
             Log.d("VisitAnimalActivity", "currIndex: " + animalsInOrder.get(currIndex));
-            ZooData.VertexInfo currExhibit = animalMap.get(exhibitIDsInOrder.get(currIndex));
-            presenter.updateCurrExhibit(currExhibit);
+            ZooData.VertexInfo currExhibitDisplayed = animalMap.get(exhibitIDsInOrder.get(currIndex));
+            futureExhibits.clear();
+            if ((currIndex + 1) != visitList.size()) {
+                for (int i = currIndex + 1; i < visitList.size(); ++i) {
+                    futureExhibits.add(visitList.get(i));
+                }
+            }
+            presenter.updateCurrExhibitDisplayed(currExhibitDisplayed, futureExhibits);
 
             if(detailed) adapter.setDirections(stepByStepDirections.get(currIndex));
             else adapter.setDirections(stepByStepBriefDirections.get(currIndex));
@@ -186,8 +199,14 @@ public class VisitAnimalActivity extends AppCompatActivity {
             }
             ActivityData.setDirectionsIndex(this, "index.json", currIndex);
             Log.d("VisitAnimalActivity", "currIndex: " + animalsInOrder.get(currIndex));
-            ZooData.VertexInfo currExhibit = animalMap.get(exhibitIDsInOrder.get(currIndex));
-            presenter.updateCurrExhibit(currExhibit);
+            ZooData.VertexInfo currExhibitDisplayed = animalMap.get(exhibitIDsInOrder.get(currIndex));
+            futureExhibits.clear();
+            if ((currIndex + 1) != visitList.size()) {
+                for (int i = currIndex + 1; i < visitList.size(); ++i) {
+                    futureExhibits.add(visitList.get(i));
+                }
+            }
+            presenter.updateCurrExhibitDisplayed(currExhibitDisplayed, futureExhibits);
 
             // Sets the previous button
             if(detailed) adapter.setDirections(stepByStepDirections.get(currIndex));
@@ -217,9 +236,6 @@ public class VisitAnimalActivity extends AppCompatActivity {
             }
         });
 
-        VisitExhibitModel model = new ViewModelProvider(this).get(VisitExhibitModel.class);
-        presenter = new VisitExhibitPresenter(this, model);
-        presenter.updateLatsAndLngs(visitList);
         // If GPS is disabled (such as in a test), don't listen for updates from real GPS.
         if (listenToGps) setupLocationListener();
 
