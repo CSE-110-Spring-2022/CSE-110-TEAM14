@@ -153,16 +153,18 @@ public class VisitAnimalActivity extends AppCompatActivity {
             String temp = "Next " + animalsInOrder.get(currIndex + 1) + " (" +
                     distance(currentLocation(), exhibitIDsInOrder.get(currIndex + 1)) + " ft)";
             nextButton.setText(temp);
+            skipButton.setText("Skip\n" + animalsInOrder.get(currIndex));
+            skipButton.setEnabled(true);
+            skipButton.setAlpha(1f);
         } else {
             nextButton.setText("");
-            nextButton.setEnabled(false);
-            nextButton.setAlpha(.8f);
             nextButton.setText("Finish");
+            skipButton.setText("");
+            skipButton.setEnabled(false);
+            skipButton.setAlpha(0.8f);
         }
 
-        skipButton.setText("Skip\n" + animalsInOrder.get(currIndex));
-        skipButton.setEnabled(true);
-        skipButton.setAlpha(1f);
+
 
         animalName.setText(animalsInOrder.get(currIndex));
 
