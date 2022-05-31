@@ -50,6 +50,8 @@ public class VisitAnimalActivity extends AppCompatActivity {
     public List<String> exhibitIDsInOrder;
     public List<String> animalsInOrder;
 
+    PermissionChecker permissionChecker;
+
     public static final String EXTRA_LISTEN_TO_GPS = "listen_to_gps";
 
     @VisibleForTesting
@@ -147,17 +149,31 @@ public class VisitAnimalActivity extends AppCompatActivity {
         // List of ALL visiting exhibits
         List<ZooData.VertexInfo> visitList = new ArrayList<>();
         for (String exhibitID : exhibitIDsInOrder) {
-            Log.d("errorcheck", "" + exhibitID);
+            Log.d("visitList", "" + exhibitID);
             visitList.add(animalMap.get(exhibitID));
         }
+
+        VisitExhibitModel model = new ViewModelProvider(this).get(VisitExhibitModel.class);
+        presenter = new VisitExhibitPresenter(this, model);
+        presenter.updateLatsAndLngs(visitList);
+
+        List<ZooData.VertexInfo> futureExhibits = new ArrayList<>();
+        futureExhibits.addAll(visitList);
+        presenter.updateCurrExhibitDisplayed(animalMap.get(exhibitIDsInOrder.get(0)), futureExhibits);
 
         previousButton.setOnClickListener(v -> {
             // decrement the index when the previous button is clicked and changes the nextButton
             currIndex--;
             ActivityData.setDirectionsIndex(this, "index.json", currIndex);
             Log.d("VisitAnimalActivity", "currIndex: " + animalsInOrder.get(currIndex));
-            ZooData.VertexInfo currExhibit = animalMap.get(exhibitIDsInOrder.get(currIndex));
-            presenter.updateCurrExhibit(currExhibit);
+            ZooData.VertexInfo currExhibitDisplayed = animalMap.get(exhibitIDsInOrder.get(currIndex));
+            futureExhibits.clear();
+            if ((currIndex + 1) != visitList.size()) {
+                for (int i = currIndex + 1; i < visitList.size(); ++i) {
+                    futureExhibits.add(visitList.get(i));
+                }
+            }
+            presenter.updateCurrExhibitDisplayed(currExhibitDisplayed, futureExhibits);
 
             adapter.setDirections(getDirections());
             adapter.notifyDataSetChanged();
@@ -189,8 +205,14 @@ public class VisitAnimalActivity extends AppCompatActivity {
             }
             ActivityData.setDirectionsIndex(this, "index.json", currIndex);
             Log.d("VisitAnimalActivity", "currIndex: " + animalsInOrder.get(currIndex));
-            ZooData.VertexInfo currExhibit = animalMap.get(exhibitIDsInOrder.get(currIndex));
-            presenter.updateCurrExhibit(currExhibit);
+            ZooData.VertexInfo currExhibitDisplayed = animalMap.get(exhibitIDsInOrder.get(currIndex));
+            futureExhibits.clear();
+            if ((currIndex + 1) != visitList.size()) {
+                for (int i = currIndex + 1; i < visitList.size(); ++i) {
+                    futureExhibits.add(visitList.get(i));
+                }
+            }
+            presenter.updateCurrExhibitDisplayed(currExhibitDisplayed, futureExhibits);
 
             // Sets the previous button
             adapter.setDirections(getDirections());
@@ -219,12 +241,15 @@ public class VisitAnimalActivity extends AppCompatActivity {
             }
         });
 
-        VisitExhibitModel model = new ViewModelProvider(this).get(VisitExhibitModel.class);
-        presenter = new VisitExhibitPresenter(this, model);
-        presenter.updateLatsAndLngs(visitList);
+        // Permission Checking
+        permissionChecker = new PermissionChecker(this);
+        permissionChecker.ensurePermissions();
         // If GPS is disabled (such as in a test), don't listen for updates from real GPS.
-        if (listenToGps) setupLocationListener();
-
+        if (listenToGps) {
+            while (!permissionChecker.hasPermissions()) {
+            }
+            setupLocationListener(presenter::updateLastKnownCoords);
+        }
 
         skipButton.setOnClickListener(v -> {
             ItemsDao itemsDao = ItemsDatabase.getSingleton(this).itemsDao();
@@ -248,10 +273,7 @@ public class VisitAnimalActivity extends AppCompatActivity {
     }
 
     @SuppressLint("MissingPermission")
-    private void setupLocationListener() {
-        // Permission Checking
-        if (new PermissionChecker(this).ensurePermissions()) return;
-
+    private void setupLocationListener(Consumer<Pair<Double, Double>> handleNewCoords) {
         // Connect location listener to the model.
         var provider = LocationManager.GPS_PROVIDER;
         var locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
@@ -262,7 +284,7 @@ public class VisitAnimalActivity extends AppCompatActivity {
                         location.getLatitude(),
                         location.getLongitude()
                 );
-                presenter.updateLastKnownCoords(coords);
+                handleNewCoords.accept(coords);
             }
         };
         locationManager.requestLocationUpdates(provider, 0, 0f, locationListener);
