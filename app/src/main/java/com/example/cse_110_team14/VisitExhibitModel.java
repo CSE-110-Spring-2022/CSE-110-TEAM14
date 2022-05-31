@@ -45,10 +45,10 @@ public class VisitExhibitModel extends AndroidViewModel {
 
     public void setLatsAndLngs(List<ZooData.VertexInfo> exhibitList) {
         for (ZooData.VertexInfo exhibit : exhibitList) {
-            LatsAndLngs.put(exhibit.name, Pair.create(exhibit.lat, exhibit.lng));
+            LatsAndLngs.put(exhibit.id, Pair.create(exhibit.lat, exhibit.lng));
         }
 
-        for (Map.Entry<String,Pair<Double,Double>> entry: LatsAndLngs.entrySet()) {
+        for (Map.Entry<String,Pair<Double,Double>> entry : LatsAndLngs.entrySet()) {
             Log.d("LatLngCheck", "Exhibit:" + entry.getKey() +
                     ", Lat: " + entry.getValue().first +
                     ", Lng: " + entry.getValue().second);
@@ -65,9 +65,9 @@ public class VisitExhibitModel extends AndroidViewModel {
         }
 
         double distFromLastKnownCoordsToExhibit =
-                getPathLength(lastKnownCoords.getValue(), LatsAndLngs.get(currExhibitDisplayed.name));
+                getPathLength(lastKnownCoords.getValue(), LatsAndLngs.get(currExhibitDisplayed.id));
         for (ZooData.VertexInfo futureExhibit : futureExhibits) {
-            if (getPathLength(lastKnownCoords.getValue(), LatsAndLngs.get(futureExhibit.name)) < distFromLastKnownCoordsToExhibit) {
+            if (getPathLength(lastKnownCoords.getValue(), LatsAndLngs.get(futureExhibit.id)) < distFromLastKnownCoordsToExhibit) {
                 return true;
             }
         }
@@ -85,4 +85,17 @@ public class VisitExhibitModel extends AndroidViewModel {
         return futureExhibits.size() == 0;
     }
 
+    // returns closest vertex id from last known location
+    public String getClosestVertex() {
+        double shortestDistance = Double.MAX_VALUE;
+        String closestVertex = "";
+        for (Map.Entry<String,Pair<Double,Double>> entry : LatsAndLngs.entrySet()) {
+            double entryDistance = getPathLength(lastKnownCoords.getValue(), entry.getValue());
+            if (entryDistance < shortestDistance) {
+                shortestDistance = entryDistance;
+                closestVertex = entry.getKey();
+            }
+        }
+        return closestVertex;
+    }
 }

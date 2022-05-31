@@ -20,10 +20,16 @@ public class VisitExhibitPresenter {
 
     public void updateLastKnownCoords(Pair<Double, Double> coords) {
         model.setLastKnownCoords(coords);
-        model.checkOffRoute();
+        if (model.checkOffRoute()) {
+            activity.offRoutePrompt();
+        };
     }
 
     public void updateLatsAndLngs(List<ZooData.VertexInfo> exhibitList) {
         model.setLatsAndLngs(exhibitList);
+    }
+
+    public String getClosestVertex() {
+        return model.getClosestVertex();
     }
 }

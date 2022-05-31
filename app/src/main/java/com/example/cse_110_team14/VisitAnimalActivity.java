@@ -79,7 +79,7 @@ public class VisitAnimalActivity extends AppCompatActivity {
         ArrayList<Integer> distancesInOrder =
                 getIntent().getIntegerArrayListExtra("distances");
 
-
+        List<ZooData.VertexInfo> vertexList = new ArrayList<>(vInfo.values());
 
         String directions = getIntent().getStringExtra("directions");
         int index = getIntent().getIntExtra("index",0);
@@ -155,8 +155,7 @@ public class VisitAnimalActivity extends AppCompatActivity {
 
         VisitExhibitModel model = new ViewModelProvider(this).get(VisitExhibitModel.class);
         presenter = new VisitExhibitPresenter(this, model);
-        presenter.updateLatsAndLngs(visitList);
-
+        presenter.updateLatsAndLngs(vertexList);
         List<ZooData.VertexInfo> futureExhibits = new ArrayList<>();
         futureExhibits.addAll(visitList);
         presenter.updateCurrExhibitDisplayed(animalMap.get(exhibitIDsInOrder.get(0)), futureExhibits);
@@ -353,5 +352,13 @@ public class VisitAnimalActivity extends AppCompatActivity {
 
     public String currentLocation(){
         return "entrance_exit_gate";
+    }
+
+    public void offRoutePrompt() {
+
+    }
+
+    public String getClosestVertex() {
+        return presenter.getClosestVertex();
     }
 }
