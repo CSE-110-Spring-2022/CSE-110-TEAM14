@@ -148,9 +148,6 @@ public class PlanActivity extends AppCompatActivity {
                 // Pass in information to DirectionsActivity
                 visitAnimalIntent.putExtra("animal_order", animalsInOrder);
                 visitAnimalIntent.putExtra("exhibit_id_order", exhibitIDsInOrder);
-                visitAnimalIntent.putExtra("full_directions", fullDirections);
-                visitAnimalIntent.putExtra("distances", distancesInOrder);
-                visitAnimalIntent.putExtra("brief_directions", briefDirections);
                 visitAnimalIntent.putExtra("directions", directionsTemp);
                 visitAnimalIntent.putExtra("index", 0);
                 startActivity(visitAnimalIntent);
