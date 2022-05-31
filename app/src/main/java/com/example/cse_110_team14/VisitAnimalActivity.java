@@ -21,8 +21,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import org.jgrapht.Graph;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -38,8 +41,14 @@ public class VisitAnimalActivity extends AppCompatActivity {
     public DirectionListAdapter adapter;
     public int currIndex;
     public boolean detailed;
-    public List<List<String>> stepByStepDirections = new ArrayList<>();
-    public List<List<String>> stepByStepBriefDirections = new ArrayList<>();
+    public DirectionsInterface directionsStrategy;
+    public Graph<String, IdentifiedWeightedEdge> g;
+    public Map<String,
+            ZooData.VertexInfo> vInfo;
+    public Map<String, ZooData.EdgeInfo> eInfo;
+
+    public List<String> exhibitIDsInOrder;
+    public List<String> animalsInOrder;
 
     public static final String EXTRA_LISTEN_TO_GPS = "listen_to_gps";
 
@@ -51,19 +60,23 @@ public class VisitAnimalActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_visit_animal);
 
+
+        g = ZooData.loadZooGraphJSON(this, "zoo_graph.json",
+                "zoo_node_info.json",
+                "zoo_edge_info.json");
+        vInfo = ZooData.loadVertexInfoJSON(this, "zoo_node_info.json");
+        eInfo = ZooData.loadEdgeInfoJSON(this, "zoo_edge_info.json");
         ActivityData.setActivity(this, "activity.json", "VisitAnimalActivity");
 
         // Getting the directions, animal name, and distances from the previous activity
-        ArrayList<String> fullDirections =
-                getIntent().getStringArrayListExtra("full_directions");
-        ArrayList<String> animalsInOrder =
+
+        animalsInOrder =
                 getIntent().getStringArrayListExtra("animal_order");
-        ArrayList<String> exhibitIDsInOrder =
+        exhibitIDsInOrder =
                 getIntent().getStringArrayListExtra("exhibit_id_order");
         ArrayList<Integer> distancesInOrder =
                 getIntent().getIntegerArrayListExtra("distances");
-        ArrayList<String> briefDirections =
-                getIntent().getStringArrayListExtra("brief_directions");
+
 
 
         String directions = getIntent().getStringExtra("directions");
@@ -74,7 +87,6 @@ public class VisitAnimalActivity extends AppCompatActivity {
 
         var listenToGps = getIntent().getBooleanExtra(EXTRA_LISTEN_TO_GPS, true);
 
-        Log.d("VisitAnimalActivity", "fullDirections: " + fullDirections);
         Log.d("VisitAnimalActivity", "animalsInOrder: " + animalsInOrder);
         Log.d("VisitAnimalActivity", "distancesInOrder: " + distancesInOrder);
         nextButton = findViewById(R.id.nextButton);
@@ -84,15 +96,9 @@ public class VisitAnimalActivity extends AppCompatActivity {
 
         // Splits the direction by line to show the directions in a recycler view
 
-        for (String s : fullDirections) {
-            stepByStepDirections.add(Arrays.asList(s.split("\n")));
-        }
-        for (String s: briefDirections) {
-            stepByStepBriefDirections.add(Arrays.asList(s.split("\n")));
-        }
 
         //
-        adapter = new DirectionListAdapter(stepByStepDirections.get(0));
+        adapter = new DirectionListAdapter(new ArrayList<>());
         adapter.setHasStableIds(true);
 
         recyclerView = findViewById(R.id.directionsRecyclerView);
@@ -100,13 +106,11 @@ public class VisitAnimalActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
 
-        if(directions.equals("detailed")) {
-            adapter.setDirections(stepByStepDirections.get(index));
-            adapter.notifyDataSetChanged();
+        if(detailed) {
+            directionsStrategy = new DetailedDirections();
         }
-        else if (directions.equals("brief")) {
-            adapter.setDirections(stepByStepBriefDirections.get(index));
-            adapter.notifyDataSetChanged();
+        else {
+            directionsStrategy = new BriefDirections();
         }
 
 
@@ -155,8 +159,7 @@ public class VisitAnimalActivity extends AppCompatActivity {
             ZooData.VertexInfo currExhibit = animalMap.get(exhibitIDsInOrder.get(currIndex));
             presenter.updateCurrExhibit(currExhibit);
 
-            if(detailed) adapter.setDirections(stepByStepDirections.get(currIndex));
-            else adapter.setDirections(stepByStepBriefDirections.get(currIndex));
+            adapter.setDirections(getDirections());
             adapter.notifyDataSetChanged();
             skipButton.setText("Skip\n"+animalsInOrder.get(currIndex));
             animalName.setText(animalsInOrder.get(currIndex));
@@ -190,8 +193,7 @@ public class VisitAnimalActivity extends AppCompatActivity {
             presenter.updateCurrExhibit(currExhibit);
 
             // Sets the previous button
-            if(detailed) adapter.setDirections(stepByStepDirections.get(currIndex));
-            else adapter.setDirections(stepByStepBriefDirections.get(currIndex));
+            adapter.setDirections(getDirections());
             adapter.notifyDataSetChanged();
             skipButton.setText("Skip\n"+animalsInOrder.get(currIndex));
             animalName.setText(animalsInOrder.get(currIndex));
@@ -230,6 +232,8 @@ public class VisitAnimalActivity extends AppCompatActivity {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         });
+        adapter.setDirections(getDirections());
+        adapter.notifyDataSetChanged();
     }
 
     private void finishVisit() {
@@ -268,21 +272,64 @@ public class VisitAnimalActivity extends AppCompatActivity {
     public void clickNew(View view) {
         detailed = !detailed;
         if(detailed) {
-            adapter.setDirections(stepByStepDirections.get(currIndex));
+            directionsStrategy = new DetailedDirections();
 
         }
         else {
-            adapter.setDirections(stepByStepBriefDirections.get(currIndex));
+            directionsStrategy = new BriefDirections();
         }
 
         ActivityData.setDirections(this, "directions.json",
                 detailed ? "detailed":"brief");
+
+        adapter.setDirections(getDirections());
         adapter.notifyDataSetChanged();
 
+    }
+
+    public List<String> getDirections() {
+        Log.d("getDirections", exhibitIDsInOrder.get(currIndex));
+        Map<String,String> animalIdToString = new HashMap<>();
+        for (ZooData.VertexInfo animal : vInfo.values()) {
+            animalIdToString.put(animal.id, animal.name);
+        }
+
+
+        Log.d("getDirections", animalIdToString.toString());
+        String temp =  directionsStrategy.directions(g,
+                    PlanActivity.shortestPathHelper(
+                            currentLocation(),
+                            exhibitIDsInOrder.get(currIndex),
+                            g,
+                            vInfo
+                    ), currentLocation(),
+                    exhibitIDsInOrder.get(currIndex),
+                    animalIdToString, vInfo,eInfo);
+        List<String> ans = new ArrayList<>();
+        for(String s : temp.split("\n")) {
+            ans.add(s);
+        }
+        if(ans.size() ==0 || ans.get(0).equals("")) {
+            Log.d("getDirections", "empty");
+            if(ans.size() == 1) {
+                ans = new ArrayList<>();
+            }
+            ans.add("You are here!");
+        }
+        else {
+            Log.d("getDirections", ans.toString());
+            Log.d("getDirections", "" + ans.size());
+            Log.d("getDirections", "" + ans.get(0));
+        }
+        return ans;
     }
 
     public void popupActivity(){
         Intent planIntent = new Intent(this, PopupActivity.class);
         startActivity(planIntent);
+    }
+
+    public String currentLocation(){
+        return "entrance_exit_gate";
     }
 }

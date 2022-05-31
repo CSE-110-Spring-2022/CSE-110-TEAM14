@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Uncomment this line of code out if u want to go back to search activity since I have not
         // implemented a way to go back to the start yet
-        //ActivityData.setActivity(this, "activity.json", "SearchActivity");
+        ActivityData.setActivity(this, "activity.json", "SearchActivity");
         String activityName = ActivityData.getActivity(this, "activity.json");
         Intent intent = new Intent(this, SearchActivity.class);;
 
@@ -119,19 +119,6 @@ public class MainActivity extends AppCompatActivity {
             Map<String, ZooData.EdgeInfo> eInfo =
                     ZooData.loadEdgeInfoJSON(this, "zoo_edge_info.json");
 
-            for(int i = 0; i < truePath.size(); i++) {
-                GraphPath<String, IdentifiedWeightedEdge> path = truePath.get(i);
-                String directions = Directions.detailedDirections(
-                        g,path, truePathNames.get(i), truePathNames.get(i+1)
-                        , animalIdToName, vInfo, eInfo);
-                Log.d("PlanActivity", directions);
-                fullDirections.add(directions);
-                String briefDirection = Directions.briefDirections(
-                        g,path, truePathNames.get(i), truePathNames.get(i+1)
-                        , animalIdToName, vInfo, eInfo);
-                briefDirections.add(briefDirection);
-            }
-
             for (int i  = 0; i < truePath.size(); ++i) {
                 GraphPath<String, IdentifiedWeightedEdge> path = truePath.get(i);
                 exhibitName = animalIdToName.get(truePathNames.get(i+1));
@@ -142,14 +129,10 @@ public class MainActivity extends AppCompatActivity {
                 distancesInOrder.add((int)(path.getWeight()));
             }
 
-
-
             intent = new Intent(this, VisitAnimalActivity.class);
             intent.putExtra("animal_order", animalsInOrder);
             intent.putExtra("exhibit_id_order", exhibitIDsInOrder);
-            intent.putExtra("full_directions", fullDirections);
             intent.putExtra("distances", distancesInOrder);
-            intent.putExtra("brief_directions", briefDirections);
             intent.putExtra("directions", ActivityData.getDirections
                     (this,"directions.json"));
             intent.putExtra("index", ActivityData.getDirectionsIndex
