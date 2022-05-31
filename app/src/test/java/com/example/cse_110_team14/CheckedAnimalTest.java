@@ -10,6 +10,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.List;
+
 @RunWith(AndroidJUnit4.class)
 public class CheckedAnimalTest {
 
@@ -22,6 +24,14 @@ public class CheckedAnimalTest {
         scenario.moveToState(Lifecycle.State.CREATED);
 
         scenario.onActivity(activity -> {
+            //activity
+            List<CheckedName> l = activity.itemsDao.getAll();
+
+            for(var v : l)
+                System.out.println(v.name);
+
+            if(l.size() == 0)
+                System.out.println("WTDFLKJADSLKFJF");
             assert(activity.checkedAnimals().isEmpty());
         });
     }
@@ -41,7 +51,10 @@ public class CheckedAnimalTest {
             // There should be one checked animal!!
             assertFalse(activity.checkedAnimals().isEmpty());
 
+            List<CheckedName> l = activity.itemsDao.getAll();
 
+            for(var v : l)
+                System.out.println(v.name);
         });
     }
 

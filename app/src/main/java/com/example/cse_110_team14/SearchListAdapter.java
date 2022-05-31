@@ -75,10 +75,13 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Vi
                 Log.d("SearchListAdapter", searchItem.checked + " ");
                 if(itemsDao != null) {
                     if (checkBox.isChecked()){
-                        try{itemsDao.insert(new CheckedName(searchItem.name));}catch(Exception e){}
+                        itemsDao.insert(new CheckedName(searchItem.name));
                     }
                     else
-                        try{itemsDao.delete(searchItem.name);}catch(Exception e){}
+                        itemsDao.delete(searchItem.name);
+                }
+                else{
+                    System.out.println("???????????????");
                 }
 
                 if(sas != null) {

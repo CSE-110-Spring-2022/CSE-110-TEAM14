@@ -13,11 +13,13 @@ public abstract class ItemsDatabase extends RoomDatabase {
     public abstract ItemsDao itemsDao();
 
     public synchronized static ItemsDatabase getSingleton(Context context){
-        if(singleton == null){
-            singleton = ItemsDatabase.makeDatabase(context);
-        }
+        if(singleton != null)
+            singleton.close();
+        singleton = ItemsDatabase.makeDatabase(context);
+
         return singleton;
     }
+
     private static ItemsDatabase makeDatabase(Context context){
         return Room.databaseBuilder(context, ItemsDatabase.class, "items_app.db")
                 .allowMainThreadQueries().build();
