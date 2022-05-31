@@ -89,7 +89,7 @@ public class PlanActivity extends AppCompatActivity {
         // Calculates the shortest path to visit all vertices
         Pair<List<GraphPath<String, IdentifiedWeightedEdge>>,List<String>> truePathPair =
                 shortestPath(plannedAnimalsIds, g,
-                        "entrance_exit_gate", "entrance_exit_gate", vInfo);
+                        "gorilla", "entrance_exit_gate", vInfo);
 
         // List of paths from one planned animal to another
         List<GraphPath<String, IdentifiedWeightedEdge>> truePath = truePathPair.first;
@@ -141,6 +141,8 @@ public class PlanActivity extends AppCompatActivity {
 
 
         ActivityData.setDirectionsIndex(this,"index.json",0);
+        ActivityData.setAnimals(this, "animals.json", animalsInOrder);
+        ActivityData.setIds(this, "ids.json", exhibitIDsInOrder);
         String directionsTemp = ActivityData.getDirections(this, "directions.json");
         directionsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,9 +150,6 @@ public class PlanActivity extends AppCompatActivity {
                 // Pass in information to DirectionsActivity
                 visitAnimalIntent.putExtra("animal_order", animalsInOrder);
                 visitAnimalIntent.putExtra("exhibit_id_order", exhibitIDsInOrder);
-                visitAnimalIntent.putExtra("full_directions", fullDirections);
-                visitAnimalIntent.putExtra("distances", distancesInOrder);
-                visitAnimalIntent.putExtra("brief_directions", briefDirections);
                 visitAnimalIntent.putExtra("directions", directionsTemp);
                 visitAnimalIntent.putExtra("index", 0);
                 startActivity(visitAnimalIntent);
