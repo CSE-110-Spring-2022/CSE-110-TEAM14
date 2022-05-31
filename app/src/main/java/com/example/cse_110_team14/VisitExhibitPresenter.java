@@ -1,5 +1,6 @@
 package com.example.cse_110_team14;
 
+import android.util.Log;
 import android.util.Pair;
 
 import java.util.List;
@@ -20,14 +21,26 @@ public class VisitExhibitPresenter {
 
     public void updateLastKnownCoords(Pair<Double, Double> coords) {
         model.setLastKnownCoords(coords);
-        Pair<Boolean, String> result = model.checkOffRoute();
-        if (result.first) {
-            if (activity.animalsInOrder.indexOf(result.second) > activity.currIndex &&
-                    activity.animalsInOrder.indexOf(result.second) !=
-                            activity.animalsInOrder.size() - 1) {
+//        Pair<Boolean, String> result = model.checkOffRoute();
+//        if (result.first) {
+//            if (activity.animalsInOrder.indexOf(result.second) > activity.currIndex &&
+//                    activity.animalsInOrder.indexOf(result.second) !=
+//                            activity.animalsInOrder.size() - 1) {
+//                activity.offRoutePrompt();
+//            }
+//        }
+        int currIndex = activity.currIndex;
+        List<String> exhibitIDsInOrder = activity.exhibitIDsInOrder;
+        int currDistance = activity.distance(activity.currentLocation(),
+                exhibitIDsInOrder.get(currIndex));
+        for(int i = currIndex + 1; i < exhibitIDsInOrder.size(); i++) {
+            int newDist = activity.distance(activity.currentLocation(), exhibitIDsInOrder.get(i));
+            if( newDist < currDistance && currIndex != exhibitIDsInOrder.size() - 2) {
                 activity.offRoutePrompt();
+                break;
             }
         }
+
     }
 
     public void updateLatsAndLngs(List<ZooData.VertexInfo> exhibitList) {
