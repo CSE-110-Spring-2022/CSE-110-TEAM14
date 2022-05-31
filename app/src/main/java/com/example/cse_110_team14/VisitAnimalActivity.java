@@ -211,6 +211,9 @@ public class VisitAnimalActivity extends AppCompatActivity {
             }
             else {
                 nextButton.setText("Finish");
+                skipButton.setText("");
+                skipButton.setEnabled(false);
+                skipButton.setAlpha(.8f);
             }
         });
 
@@ -220,6 +223,13 @@ public class VisitAnimalActivity extends AppCompatActivity {
         // If GPS is disabled (such as in a test), don't listen for updates from real GPS.
         if (listenToGps) setupLocationListener();
 
+
+        skipButton.setOnClickListener(v -> {
+            ItemsDao itemsDao = ItemsDatabase.getSingleton(this).itemsDao();
+            itemsDao.delete(animalName.getText().toString());
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void finishVisit() {

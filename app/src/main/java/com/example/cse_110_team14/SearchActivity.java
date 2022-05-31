@@ -68,7 +68,7 @@ public class SearchActivity extends AppCompatActivity{
         List<CheckedName> checkedNames = new ArrayList<>();
         int checkCount = 0;
         if(itemsDao != null) {
-             try{checkedNames = itemsDao.getAll();}catch(Exception e){}
+            try{checkedNames = itemsDao.getAll();} catch(Exception e){}
 
             for (var an : exhibitList) {
                 boolean found = false;
@@ -79,7 +79,6 @@ public class SearchActivity extends AppCompatActivity{
                         break;
                     }
                 }
-                System.out.println(found);
                 an.checked = found;
             }
             searchListAdapter.itemsDao = itemsDao;
