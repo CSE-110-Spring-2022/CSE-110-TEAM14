@@ -211,9 +211,9 @@ public class VisitAnimalActivity extends AppCompatActivity {
             }
             else {
                 nextButton.setText("Finish");
-                skipButton.setText("");
-                skipButton.setEnabled(false);
-                skipButton.setAlpha(.8f);
+                //skipButton.setText("");
+                //skipButton.setEnabled(false);
+                //skipButton.setAlpha(.8f);
             }
         });
 
