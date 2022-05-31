@@ -436,20 +436,35 @@ public class VisitAnimalActivity extends AppCompatActivity {
 
     // This method is called when you press the settings button
     public void clickNew(View view) {
-        detailed = !detailed;
-        if (detailed) {
-            directionsStrategy = new DetailedDirections();
+        final TextView replan = new EditText(this);
+        replan.setText("Brief or detailed directions?");
 
-        } else {
-            directionsStrategy = new BriefDirections();
-        }
+        final LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.addView(replan);
 
-        ActivityData.setDirections(this, "directions.json",
-                detailed ? "detailed" : "brief");
+        var builder = new AlertDialog.Builder(this)
+                .setTitle("Settings")
+                .setView(layout)
+                .setPositiveButton("Brief directions", (dialog, which) -> {
+                    detailed = false;
+                    directionsStrategy = new BriefDirections();
+                    ActivityData.setDirections(this, "directions.json",
+                            detailed ? "detailed" : "brief");
 
-        adapter.setDirections(getDirections());
-        adapter.notifyDataSetChanged();
+                    adapter.setDirections(getDirections());
+                    adapter.notifyDataSetChanged();
+                })
+                .setNegativeButton("Detailed directions", (dialog, which) -> {
+                    detailed = true;
+                    directionsStrategy = new DetailedDirections();
+                    ActivityData.setDirections(this, "directions.json",
+                            detailed ? "detailed" : "brief");
 
+                    adapter.setDirections(getDirections());
+                    adapter.notifyDataSetChanged();
+                });
+        builder.show();
 
     }
 
