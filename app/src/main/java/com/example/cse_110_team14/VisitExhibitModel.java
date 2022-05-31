@@ -16,20 +16,26 @@ import java.util.Map;
 public class VisitExhibitModel extends AndroidViewModel {
     private final MutableLiveData<Pair<Double, Double>> lastKnownCoords;
     private final Map<String, Pair<Double,Double>> LatsAndLngs = new HashMap<>();
-    private ZooData.VertexInfo currExhibit;
+    private ZooData.VertexInfo currExhibitDisplayed;
+    private List<ZooData.VertexInfo> futureExhibits;
 
     public VisitExhibitModel(@NonNull Application application) {
         super(application);
         lastKnownCoords = new MutableLiveData<>(null);
     }
 
-    public void setCurrExhibit(ZooData.VertexInfo exhibit) {
-        currExhibit = exhibit;
+    public void setCurrExhibitDisplayed(ZooData.VertexInfo currExhibitDisplayed) {
+        this.currExhibitDisplayed = currExhibitDisplayed;
+    }
+
+    public void setFutureExhibits(List<ZooData.VertexInfo> futureExhibits) {
+        this.futureExhibits = futureExhibits;
     }
 
     public void setLastKnownCoords(Pair<Double, Double> coords) {
         Log.d("setCoords", "Latitude: "+ coords.first);
         Log.d("setCoords", "Longitude: " + coords.second);
+        Log.d("setCoords", "------------------------------");
         lastKnownCoords.setValue(coords);
     }
 
@@ -39,7 +45,7 @@ public class VisitExhibitModel extends AndroidViewModel {
 
     public void setLatsAndLngs(List<ZooData.VertexInfo> exhibitList) {
         for (ZooData.VertexInfo exhibit : exhibitList) {
-            LatsAndLngs.put(exhibit.name, new Pair<>(exhibit.lat, exhibit.lng));
+            LatsAndLngs.put(exhibit.name, Pair.create(exhibit.lat, exhibit.lng));
         }
 
         for (Map.Entry<String,Pair<Double,Double>> entry: LatsAndLngs.entrySet()) {
@@ -50,12 +56,18 @@ public class VisitExhibitModel extends AndroidViewModel {
     }
 
     public boolean checkOffRoute() {
-        if (closeToCurrExhibit()) {
+        if ((lastKnownCoords == null) || (LatsAndLngs.isEmpty())) {
             return false;
         }
 
-        for (Map.Entry<String,Pair<Double,Double>> entry : LatsAndLngs.entrySet()) {
-            if (closeTo(entry.getValue())) {
+        if (exhibitDisplayedisLast()) {
+            return false;
+        }
+
+        double distFromLastKnownCoordsToExhibit =
+                getPathLength(lastKnownCoords.getValue(), LatsAndLngs.get(currExhibitDisplayed.name));
+        for (ZooData.VertexInfo futureExhibit : futureExhibits) {
+            if (getPathLength(lastKnownCoords.getValue(), LatsAndLngs.get(futureExhibit.name)) < distFromLastKnownCoordsToExhibit) {
                 return true;
             }
         }
@@ -63,21 +75,14 @@ public class VisitExhibitModel extends AndroidViewModel {
         return false;
     }
 
-    public boolean closeToCurrExhibit() {
-        if (LatsAndLngs.get(currExhibit) != null) {
-            return closeCheck(lastKnownCoords.getValue(), LatsAndLngs.get(currExhibit));
-        }
-        return true;
-    }
-
-    public boolean closeTo(Pair<Double,Double> otherCoord)  {
-        return closeCheck(lastKnownCoords.getValue(), otherCoord);
-    }
-
-    public boolean closeCheck(Pair<Double,Double> coord1, Pair<Double,Double> coord2) {
+    public double getPathLength(Pair<Double, Double> coord1, Pair<Double, Double> coord2) {
         var LatDifference = coord1.first - coord2.first;
         var LngDifference = coord1.second - coord2.second;
-        return Math.sqrt(Math.pow(LatDifference, 2) + Math.pow(LngDifference, 2)) < 0.001;
+        return Math.sqrt(Math.pow(LatDifference, 2) + Math.pow(LngDifference, 2));
+    }
+
+    public boolean exhibitDisplayedisLast() {
+        return futureExhibits.size() == 0;
     }
 
 }
