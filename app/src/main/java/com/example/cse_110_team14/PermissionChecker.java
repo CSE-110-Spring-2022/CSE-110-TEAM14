@@ -17,6 +17,11 @@ public class PermissionChecker {
 
     final ActivityResultLauncher<String[]> requestPermissionLauncher;
 
+    private final String[] requiredPermissions = new String[] {
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+    };
+
     public PermissionChecker(ComponentActivity activity) {
         this.activity = activity;
         requestPermissionLauncher = activity.registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), perms -> {
@@ -26,20 +31,18 @@ public class PermissionChecker {
         });
     }
 
-    boolean ensurePermissions() {
-        var requiredPermissions = new String[]{
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-        };
-
+    public void ensurePermissions() {
         var hasNoLocationPerms = Arrays.stream(requiredPermissions)
                 .map(perm -> ContextCompat.checkSelfPermission(activity, perm))
                 .allMatch(status -> status == PackageManager.PERMISSION_DENIED);
 
         if (hasNoLocationPerms) {
             requestPermissionLauncher.launch(requiredPermissions);
-            return true;
         }
-        return false;
+    }
+
+    public boolean hasPermissions() {
+        return (activity.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+                && (activity.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED);
     }
 }

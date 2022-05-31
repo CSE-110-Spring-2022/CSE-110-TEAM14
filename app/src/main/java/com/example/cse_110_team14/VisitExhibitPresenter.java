@@ -13,8 +13,9 @@ public class VisitExhibitPresenter {
         this.model = model;
     }
 
-    public void updateCurrExhibit(ZooData.VertexInfo exhibit) {
-        model.setCurrExhibit(exhibit);
+    public void updateCurrExhibitDisplayed(ZooData.VertexInfo exhibit, List<ZooData.VertexInfo> futureExhibits) {
+        model.setCurrExhibitDisplayed(exhibit);
+        model.setFutureExhibits(futureExhibits);
     }
 
     public void updateLastKnownCoords(Pair<Double, Double> coords) {
