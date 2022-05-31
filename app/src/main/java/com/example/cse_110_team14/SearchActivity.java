@@ -37,6 +37,7 @@ public class SearchActivity extends AppCompatActivity{
     public Button clearSelectedListBtn;
     public TextView noSearchResults;
     public TextView noSelectedExhibits;
+    public ItemsDao itemsDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,12 +65,15 @@ public class SearchActivity extends AppCompatActivity{
         searchListAdapter.setHasStableIds(true);
         searchListAdapter.setSearchItems(exhibitList);
 
-        ItemsDao itemsDao = ItemsDatabase.getSingleton(this).itemsDao();
+        //if(ItemsDatabase.getSingleton(this).isOpen())
+        //    ItemsDatabase.getSingleton(this).close();
+
+        itemsDao = ItemsDatabase.getSingleton(this).itemsDao();
+
         List<CheckedName> checkedNames = new ArrayList<>();
         int checkCount = 0;
         if(itemsDao != null) {
-            try{checkedNames = itemsDao.getAll();} catch(Exception e){}
-
+            checkedNames = itemsDao.getAll();
             for (var an : exhibitList) {
                 boolean found = false;
                 for (var ch : checkedNames) {
@@ -183,7 +187,7 @@ public class SearchActivity extends AppCompatActivity{
                 Log.d("sizecheck", ""+exhibitList.size());
                 for (ZooData.VertexInfo exhibit : exhibitList) {
                     if (exhibit.checked) {
-                        try{itemsDao.delete(exhibit.name);}catch(Exception e){}
+                        itemsDao.delete(exhibit.name);
                     }
                     exhibit.checked = false;
                 }
