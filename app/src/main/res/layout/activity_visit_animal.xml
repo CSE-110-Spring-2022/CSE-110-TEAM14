@@ -76,4 +76,25 @@
         app:layout_constraintEnd_toStartOf="@id/nextButton"
         app:layout_constraintStart_toEndOf="@id/previousButton"
         app:layout_constraintTop_toBottomOf="@id/directionsRecyclerView" />
+
+    <Button
+        android:id="@+id/mockButton"
+        android:layout_width="85dp"
+        android:layout_height="wrap_content"
+        android:text="Mock"
+        android:textSize="8sp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <Button
+        android:id="@+id/reEnableGPSButton"
+        android:layout_width="85dp"
+        android:layout_height="wrap_content"
+        android:text="Re-enable GPS"
+        android:textSize="8sp"
+        android:layout_marginStart="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/mockButton" />
 </androidx.constraintlayout.widget.ConstraintLayout>

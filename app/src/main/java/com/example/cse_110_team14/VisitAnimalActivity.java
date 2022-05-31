@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -18,7 +19,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.jgrapht.Graph;
@@ -38,6 +42,8 @@ public class VisitAnimalActivity extends AppCompatActivity {
     public Button nextButton;
     public Button previousButton;
     public Button skipButton;
+    public Button mockButton;
+    public Button reEnableGPSButton;
     public TextView animalName;
     public DirectionListAdapter adapter;
     public int currIndex;
@@ -52,6 +58,8 @@ public class VisitAnimalActivity extends AppCompatActivity {
     public List<String> animalsInOrder;
 
     PermissionChecker permissionChecker;
+    LocationManager locationManager;
+    LocationListener locationListener;
 
     public static final String EXTRA_LISTEN_TO_GPS = "listen_to_gps";
 
@@ -94,6 +102,8 @@ public class VisitAnimalActivity extends AppCompatActivity {
         previousButton = findViewById(R.id.previousButton);
         skipButton = findViewById(R.id.skipButton);
         animalName = findViewById(R.id.animalName);
+        mockButton = findViewById(R.id.mockButton);
+        reEnableGPSButton = findViewById(R.id.reEnableGPSButton);
 
         // Splits the direction by line to show the directions in a recycler view
 
@@ -336,6 +346,44 @@ public class VisitAnimalActivity extends AppCompatActivity {
         });
         adapter.setDirections(getDirections());
         adapter.notifyDataSetChanged();
+
+        mockButton.setOnClickListener(v -> {
+            disableGPS();
+            var inputType = EditorInfo.TYPE_CLASS_NUMBER
+                    | EditorInfo.TYPE_NUMBER_FLAG_SIGNED
+                    | EditorInfo.TYPE_NUMBER_FLAG_DECIMAL;
+
+            final EditText latInput = new EditText(this);
+            latInput.setInputType(inputType);
+            latInput.setHint("Latitude");
+
+            final EditText lngInput = new EditText(this);
+            lngInput.setInputType(inputType);
+            lngInput.setHint("Longitude");
+
+            final LinearLayout layout = new LinearLayout(this);
+            layout.setDividerPadding(8);
+            layout.setOrientation(LinearLayout.VERTICAL);
+            layout.addView(latInput);
+            layout.addView(lngInput);
+
+            var builder = new AlertDialog.Builder(this)
+                    .setTitle("Inject a Mock Location")
+                    .setView(layout)
+                    .setPositiveButton("Submit", (dialog, which) -> {
+                        var lat = Double.parseDouble(latInput.getText().toString());
+                        var lng = Double.parseDouble(lngInput.getText().toString());
+                        presenter.updateLastKnownCoords(Pair.create(lat, lng));
+                    })
+                    .setNegativeButton("Cancel", (dialog, which) -> {
+                        dialog.cancel();
+                    });
+            builder.show();
+        });
+
+        reEnableGPSButton.setOnClickListener(v -> {
+            reEnableGPS();
+        });
     }
 
     private void finishVisit() {
@@ -353,8 +401,8 @@ public class VisitAnimalActivity extends AppCompatActivity {
     private void setupLocationListener(Consumer<Pair<Double, Double>> handleNewCoords) {
         // Connect location listener to the model.
         var provider = LocationManager.GPS_PROVIDER;
-        var locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        var locationListener = new LocationListener() {
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(@NonNull Location location) {
                 var coords = Pair.create(
@@ -445,4 +493,12 @@ public class VisitAnimalActivity extends AppCompatActivity {
     }
 
 
+    public void disableGPS() {
+        locationManager.removeUpdates(locationListener);
+        locationManager = null;
+    }
+
+    public void reEnableGPS() {
+        setupLocationListener(presenter::updateLastKnownCoords);
+    }
 }
