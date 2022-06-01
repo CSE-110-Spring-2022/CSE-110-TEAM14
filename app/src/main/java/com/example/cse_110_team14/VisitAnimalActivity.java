@@ -39,7 +39,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 // This is where you get directions
-public class VisitAnimalActivity extends AppCompatActivity {
+public class VisitAnimalActivity extends AppCompatActivity implements LocationObserver {
 
     public RecyclerView recyclerView;
     public Button nextButton;
@@ -65,6 +65,7 @@ public class VisitAnimalActivity extends AppCompatActivity {
     LocationManager locationManager;
     LocationListener locationListener;
     public List<ZooData.VertexInfo> futureExhibits;
+    public DirectionsFactoryInterface directionsF = new DirectionsFactory();
 
     public static final String EXTRA_LISTEN_TO_GPS = "listen_to_gps";
 
@@ -95,6 +96,8 @@ public class VisitAnimalActivity extends AppCompatActivity {
         for(Pair<Integer, String> pair : distancePairs) {
             Log.d("allDistances", pair.second + " " + pair.first);
         }
+
+        directionsStrategy = directionsF.getDirectionsStrategy(detailed ? "detailed" : "brief");
         animalsInOrder =
                 getIntent().getStringArrayListExtra("animal_order");
         exhibitIDsInOrder =
@@ -121,8 +124,6 @@ public class VisitAnimalActivity extends AppCompatActivity {
 
         // Splits the direction by line to show the directions in a recycler view
 
-
-        //
         adapter = new DirectionListAdapter(new ArrayList<>());
         adapter.setHasStableIds(true);
 
@@ -163,7 +164,9 @@ public class VisitAnimalActivity extends AppCompatActivity {
             skipButton.setEnabled(false);
             skipButton.setAlpha(0.8f);
         }
-
+        if(presenter != null) {
+            presenter.setLocationObserver(this);
+        }
 
 
         animalName.setText(animalsInOrder.get(currIndex));
@@ -407,6 +410,10 @@ public class VisitAnimalActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Called when the user is finished with visit and wants to return to the main menu
+     * Clears the database, activityStack, and returns to search activity
+     */
     private void finishVisit() {
         Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -418,6 +425,10 @@ public class VisitAnimalActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /**
+     * As the name suggests, this method sets up the LocationListener
+     * @param handleNewCoords The current coordinates (if they exist)
+     */
     @SuppressLint("MissingPermission")
     private void setupLocationListener(Consumer<Pair<Double, Double>> handleNewCoords) {
         // Connect location listener to the model.
@@ -436,7 +447,11 @@ public class VisitAnimalActivity extends AppCompatActivity {
         locationManager.requestLocationUpdates(provider, 0, 0f, locationListener);
     }
 
-    // This method is called when you press the settings button
+    /**
+     * This method is called when the user clicks the settings button. Brings up the settings
+     * prompts and changes the directions strategy
+     * @param view The view/button that was clicked
+     */
     public void clickNew(View view) {
         final TextView replan = new EditText(this);
         replan.setText("Brief or detailed directions?");
@@ -470,6 +485,11 @@ public class VisitAnimalActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Gets the directions to the current exhibit from the current location
+     * using the current strategy
+     * @return The directions to the current exhibit from the current location
+     */
     public List<String> getDirections() {
         Log.d("getDirections", exhibitIDsInOrder.get(currIndex));
         Map<String, String> animalIdToString = new HashMap<>();
@@ -506,10 +526,24 @@ public class VisitAnimalActivity extends AppCompatActivity {
         return ans;
     }
 
+    /**
+     * @return The id of the closest vertex to the current location
+     */
     public String currentLocation() {
         return getClosestVertex();
     }
 
+    /**
+     * Called when the location is changed and we are off the route
+     */
+    @Override
+    public void onChange(){
+        offRoutePrompt();
+    }
+
+    /**
+     * Opens the prompt to tell the user they are off the route
+     */
     public void offRoutePrompt() {
         if(offRouteCalled){
             return;
@@ -536,6 +570,10 @@ public class VisitAnimalActivity extends AppCompatActivity {
         Log.d("offRoutePrompt", "called " + getClosestVertex());
         offRouteCalled = true;
     }
+
+    /**
+     * Replans the route when the user is off the route
+     */
     public void replanBackend(){
         offRouteCalled = false;
         Map<String, ZooData.VertexInfo> animalMap =
@@ -627,18 +665,26 @@ public class VisitAnimalActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * @return The id of the closest vertex. Defaults to our location which is gorilla.
+     */
     public String getClosestVertex() {
         if(presenter == null) return "gorilla";
         return presenter.getClosestVertex();
     }
 
+    /**
+     * @return The distance between two vertices in feet.
+     */
     public int distance(String v1, String v2) {
         GraphPath<String, IdentifiedWeightedEdge> a =
                 PlanActivity.shortestPathHelper(v1, v2, g, vInfo);
         return (int) a.getWeight();
     }
 
-
+    /**
+     * Disables the GPS so we can mock location
+     */
     public void disableGPS() {
         if(locationManager != null) {
             locationManager.removeUpdates(locationListener);
@@ -646,6 +692,9 @@ public class VisitAnimalActivity extends AppCompatActivity {
         locationManager = null;
     }
 
+    /**
+     * Enables the GPS so we can get real location
+     */
     public void reEnableGPS() {
         setupLocationListener(presenter::updateLastKnownCoords);
     }
