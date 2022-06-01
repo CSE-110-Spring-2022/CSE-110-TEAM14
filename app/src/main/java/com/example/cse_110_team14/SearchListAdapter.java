@@ -86,7 +86,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Vi
 
                 if(sas != null) {
                     int count = 0;
-                    for(ZooData.VertexInfo v : sas.sa.exhibitList)
+                    for(ZooData.VertexInfo v : sas.sa.presenter.getExhibitList())
                         if(v.checked)
                             count ++;
                     sas.setPlanCount(count);

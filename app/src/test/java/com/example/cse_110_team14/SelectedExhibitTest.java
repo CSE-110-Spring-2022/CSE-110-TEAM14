@@ -31,7 +31,7 @@ public class SelectedExhibitTest {
             RecyclerView searchRecyclerView = activity.searchRecyclerView;
             RecyclerView.ViewHolder searchVh = searchRecyclerView.findViewHolderForAdapterPosition(0);
             searchVh.itemView.findViewById(R.id.search_item_checkbox).performClick();
-            assertEquals("Crocodiles", activity.selectedList.get(0));
+            assertEquals("Crocodiles", activity.presenter.getSelectedList().get(0));
             assertEquals(1, activity.selectedListAdapter.getItemCount());
         });
     }
