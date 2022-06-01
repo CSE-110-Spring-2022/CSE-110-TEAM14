@@ -16,7 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ActivityData {
-
+    /**
+     * This method is used to set the list of all the activities in the database.
+     * @param context The context of the application.
+     * @param filename The name of the file that contains the list of all the activities.
+     * @param activity The activity that is being set.
+     */
     public static void setActivity(Context context, String filename, String activity) {
         FileOutputStream outputStream;
         try{
@@ -29,6 +34,12 @@ public class ActivityData {
         }
     }
 
+    /**
+     * This method is used to set the index of the current activity.
+     * @param context The context of the application.
+     * @param filename The name of the file that contains the index of the current activity.
+     * @param index The index of the current activity.
+     */
     public static void setDirectionsIndex(Context context, String filename, int index) {
         FileOutputStream outputStream;
         try{
@@ -41,6 +52,12 @@ public class ActivityData {
         }
     }
 
+    /**
+     * This method is used to set the direction strategy for the current activity.
+     * @param context The context of the application.
+     * @param filename The name of the file that contains the list of directions for the current activity.
+     * @param directions The list of directions for the current activity.
+     */
     public static void setDirections(Context context, String filename, String directions) {
         FileOutputStream outputStream;
         try{
@@ -53,6 +70,12 @@ public class ActivityData {
         }
     }
 
+    /**
+     * This method is used to set the list of all the animal names in the database.
+     * @param context The context of the application.
+     * @param filename The name of the file that contains the list of all the animal names.
+     * @param animals The list of all the animal names.
+     */
     public static void setAnimals(Context context, String filename, List<String> animals) {
         FileOutputStream outputStream;
         try{
@@ -67,6 +90,12 @@ public class ActivityData {
         }
     }
 
+    /**
+     * This method is used to set the list of all the animal ids in the database.
+     * @param context The context of the application.
+     * @param filename The name of the file that contains the list of all the animal ids.
+     * @param animals The list of all the animal ids.
+     */
     public static void setIds(Context context, String filename, List<String> animals) {
         FileOutputStream outputStream;
         try{
@@ -80,6 +109,13 @@ public class ActivityData {
             e.printStackTrace();
         }
     }
+
+    /**
+     * This method is used to get the list of all the animal ids in the database.
+     * @param context The context of the application.
+     * @param filename The name of the file that contains the list of all the animal ids.
+     * @return The list of all the animal ids.
+     */
     public static ArrayList<String> getIds(Context context, String filename) {
         File file = new File(context.getFilesDir(), filename);
         if(file.exists()) {
@@ -104,6 +140,13 @@ public class ActivityData {
 
         return new ArrayList<>();
     }
+
+    /**
+     * This method is used to get the list of all the animal names in the database.
+     * @param context The context of the application.
+     * @param filename The name of the file that contains the list of all the animal names.
+     * @return The list of all the animal names.
+     */
     public static ArrayList<String> getAnimals(Context context, String filename) {
         File file = new File(context.getFilesDir(), filename);
         if(file.exists()) {
@@ -129,6 +172,12 @@ public class ActivityData {
         return new ArrayList<>();
     }
 
+    /**
+     * This method is used to get the current activity.
+     * @param context The context of the application.
+     * @param filename The name of the file that contains the current activity.
+     * @return The current activity.
+     */
     public static String getActivity(Context context, String filename) {
         File file = new File(context.getFilesDir(), filename);
         if(file.exists()) {
@@ -149,6 +198,12 @@ public class ActivityData {
         return "";
     }
 
+    /**
+     * This method is used to get the current index of the current activity.
+     * @param context The context of the application.
+     * @param filename The name of the file that contains the current index of the current activity.
+     * @return The current index of the current activity.
+     */
     public static int getDirectionsIndex(Context context, String filename) {
         File file = new File(context.getFilesDir(), filename);
         if(file.exists()) {
@@ -169,6 +224,12 @@ public class ActivityData {
         return 0;
     }
 
+    /**
+     * This method is used to get the current direction strategy
+     * @param context The context of the application.
+     * @param filename The name of the file that contains the current direction strategy.
+     * @return The current direction strategy.
+     */
     public static String getDirections(Context context, String filename) {
         File file = new File(context.getFilesDir(), filename);
         if(file.exists()) {
