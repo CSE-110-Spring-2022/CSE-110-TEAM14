@@ -65,6 +65,7 @@ public class VisitAnimalActivity extends AppCompatActivity implements LocationOb
     LocationManager locationManager;
     LocationListener locationListener;
     public List<ZooData.VertexInfo> futureExhibits;
+    public DirectionsFactoryInterface directionsF = new DirectionsFactory();
 
     public static final String EXTRA_LISTEN_TO_GPS = "listen_to_gps";
 
@@ -95,6 +96,8 @@ public class VisitAnimalActivity extends AppCompatActivity implements LocationOb
         for(Pair<Integer, String> pair : distancePairs) {
             Log.d("allDistances", pair.second + " " + pair.first);
         }
+
+        directionsStrategy = directionsF.getDirectionsStrategy(detailed ? "detailed" : "brief");
         animalsInOrder =
                 getIntent().getStringArrayListExtra("animal_order");
         exhibitIDsInOrder =
