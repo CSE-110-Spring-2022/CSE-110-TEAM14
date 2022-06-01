@@ -32,7 +32,7 @@ public class CheckedAnimalTest {
 
             if(l.size() == 0)
                 System.out.println("WTDFLKJADSLKFJF");
-            assert(activity.checkedAnimals().isEmpty());
+            assert(activity.getCheckedExhibits().isEmpty());
         });
     }
 
@@ -49,7 +49,7 @@ public class CheckedAnimalTest {
             RecyclerView.ViewHolder vh = recyclerView.findViewHolderForAdapterPosition(0);
             vh.itemView.findViewById(R.id.search_item_checkbox).performClick();
             // There should be one checked animal!!
-            assertFalse(activity.checkedAnimals().isEmpty());
+            assertFalse(activity.getCheckedExhibits().isEmpty());
 
             List<CheckedName> l = activity.itemsDao.getAll();
 
