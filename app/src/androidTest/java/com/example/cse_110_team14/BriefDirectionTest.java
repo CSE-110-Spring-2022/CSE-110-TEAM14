@@ -34,7 +34,7 @@ import org.junit.runner.RunWith;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class DetailedBriefDirectionTest {
+public class BriefDirectionTest {
 
     @Rule
     public ActivityScenarioRule<MainActivity> mActivityScenarioRule =
@@ -46,8 +46,10 @@ public class DetailedBriefDirectionTest {
                     "android.permission.ACCESS_FINE_LOCATION",
                     "android.permission.ACCESS_COARSE_LOCATION");
 
+    // Test brief directions. Plan contains crocodiles and koi fish. Mock location is at
+    // gorilla exhibit location.
     @Test
-    public void detailedBriefDirectionTest() {
+    public void BriefDirectionTest() {
         ViewInteraction materialCheckBox = onView(
                 allOf(withId(R.id.search_item_checkbox),
                         childAtPosition(
@@ -146,112 +148,45 @@ public class DetailedBriefDirectionTest {
         appCompatImageButton.perform(click());
 
         ViewInteraction materialButton6 = onView(
-                allOf(withId(android.R.id.button2), withText("Detailed directions"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withClassName(is("android.widget.ScrollView")),
-                                        0),
-                                1)));
-        materialButton6.perform(scrollTo(), click());
-
-        ViewInteraction textView = onView(
-                allOf(withId(R.id.direction), withText(" 1. Proceed on Monkey Trail 1200 ft towards Scripps Aviary."),
-                        withParent(withParent(withId(R.id.directionsRecyclerView))),
-                        isDisplayed()));
-        textView.check(matches(withText(" 1. Proceed on Monkey Trail 1200 ft towards Scripps Aviary.")));
-
-        ViewInteraction textView2 = onView(
-                allOf(withId(R.id.direction), withText(" 2. Proceed on Hippo Trail 1500 ft towards Monkey Trail / Hippo Trail."),
-                        withParent(withParent(withId(R.id.directionsRecyclerView))),
-                        isDisplayed()));
-        textView2.check(matches(withText(" 2. Proceed on Hippo Trail 1500 ft towards Monkey Trail / Hippo Trail.")));
-
-        ViewInteraction textView3 = onView(
-                allOf(withId(R.id.direction), withText(" 3. Continue on Hippo Trail 1100 ft towards Crocodiles."),
-                        withParent(withParent(withId(R.id.directionsRecyclerView))),
-                        isDisplayed()));
-        textView3.check(matches(withText(" 3. Continue on Hippo Trail 1100 ft towards Crocodiles.")));
-
-        ViewInteraction textView4 = onView(
-                allOf(withId(R.id.direction), withText(" 4. Continue on Hippo Trail 1900 ft towards Hippos."),
-                        withParent(withParent(withId(R.id.directionsRecyclerView))),
-                        isDisplayed()));
-        textView4.check(matches(withText(" 4. Continue on Hippo Trail 1900 ft towards Hippos.")));
-
-        ViewInteraction textView5 = onView(
-                allOf(withId(R.id.direction), withText(" 5. Proceed on Treetops Way 1900 ft towards Treetops Way / Hippo Trail."),
-                        withParent(withParent(withId(R.id.directionsRecyclerView))),
-                        isDisplayed()));
-        textView5.check(matches(withText(" 5. Proceed on Treetops Way 1900 ft towards Treetops Way / Hippo Trail.")));
-
-        ViewInteraction textView6 = onView(
-                allOf(withId(R.id.direction), withText(" 6. Continue on Treetops Way 1400 ft towards Treetops Way / Orangutan Trail."),
-                        withParent(withParent(withId(R.id.directionsRecyclerView))),
-                        isDisplayed()));
-        textView6.check(matches(withText(" 6. Continue on Treetops Way 1400 ft towards Treetops Way / Orangutan Trail.")));
-
-        ViewInteraction textView7 = onView(
-                allOf(withId(R.id.direction), withText(" 7. Continue on Treetops Way 1100 ft towards Treetops Way / Fern Canyon Trail."),
-                        withParent(withParent(withId(R.id.directionsRecyclerView))),
-                        isDisplayed()));
-        textView7.check(matches(withText(" 7. Continue on Treetops Way 1100 ft towards Treetops Way / Fern Canyon Trail.")));
-
-        ViewInteraction textView8 = onView(
-                allOf(withId(R.id.direction), withText(" 8. Proceed on Front Street 3200 ft towards Front Street / Terrace Lagoon Loop (South)."),
-                        withParent(withParent(withId(R.id.directionsRecyclerView))),
-                        isDisplayed()));
-        textView8.check(matches(withText(" 8. Proceed on Front Street 3200 ft towards Front Street / Terrace Lagoon Loop (South).")));
-
-        ViewInteraction appCompatImageButton2 = onView(
-                allOf(withId(R.id.imageButton),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.content),
-                                        0),
-                                4),
-                        isDisplayed()));
-        appCompatImageButton2.perform(click());
-
-        ViewInteraction materialButton7 = onView(
                 allOf(withId(android.R.id.button1), withText("Brief directions"),
                         childAtPosition(
                                 childAtPosition(
                                         withClassName(is("android.widget.ScrollView")),
                                         0),
                                 0)));
-        materialButton7.perform(scrollTo(), click());
+        materialButton6.perform(scrollTo(), click());
 
-        ViewInteraction textView9 = onView(
+        ViewInteraction textView1 = onView(
                 allOf(withId(R.id.direction), withText(" 1. Proceed on Monkey Trail 1200 ft towards Scripps Aviary."),
                         withParent(withParent(withId(R.id.directionsRecyclerView))),
                         isDisplayed()));
-        textView9.check(matches(withText(" 1. Proceed on Monkey Trail 1200 ft towards Scripps Aviary.")));
+        textView1.check(matches(withText(" 1. Proceed on Monkey Trail 1200 ft towards Scripps Aviary.")));
 
-        ViewInteraction textView10 = onView(
+        ViewInteraction textView2 = onView(
                 allOf(withId(R.id.direction), withText(" 2. Proceed on Hippo Trail 4500 ft towards Monkey Trail / Hippo Trail."),
                         withParent(withParent(withId(R.id.directionsRecyclerView))),
                         isDisplayed()));
-        textView10.check(matches(withText(" 2. Proceed on Hippo Trail 4500 ft towards Monkey Trail / Hippo Trail.")));
+        textView2.check(matches(withText(" 2. Proceed on Hippo Trail 4500 ft towards Monkey Trail / Hippo Trail.")));
 
-        ViewInteraction textView11 = onView(
+        ViewInteraction textView3 = onView(
                 allOf(withId(R.id.direction), withText(" 3. Proceed on Treetops Way 4400 ft towards Treetops Way / Hippo Trail."),
                         withParent(withParent(withId(R.id.directionsRecyclerView))),
                         isDisplayed()));
-        textView11.check(matches(withText(" 3. Proceed on Treetops Way 4400 ft towards Treetops Way / Hippo Trail.")));
+        textView3.check(matches(withText(" 3. Proceed on Treetops Way 4400 ft towards Treetops Way / Hippo Trail.")));
 
-        ViewInteraction textView12 = onView(
+        ViewInteraction textView4 = onView(
                 allOf(withId(R.id.direction), withText(" 4. Proceed on Front Street 3200 ft towards Front Street / Terrace Lagoon Loop (South)."),
                         withParent(withParent(withId(R.id.directionsRecyclerView))),
                         isDisplayed()));
-        textView12.check(matches(withText(" 4. Proceed on Front Street 3200 ft towards Front Street / Terrace Lagoon Loop (South).")));
+        textView4.check(matches(withText(" 4. Proceed on Front Street 3200 ft towards Front Street / Terrace Lagoon Loop (South).")));
 
-        ViewInteraction textView13 = onView(
+        ViewInteraction textView5 = onView(
                 allOf(withId(R.id.direction), withText(" 5. Proceed on Terrace Lagoon Loop 2200 ft towards Koi Fish."),
                         withParent(withParent(withId(R.id.directionsRecyclerView))),
                         isDisplayed()));
-        textView13.check(matches(withText(" 5. Proceed on Terrace Lagoon Loop 2200 ft towards Koi Fish.")));
+        textView5.check(matches(withText(" 5. Proceed on Terrace Lagoon Loop 2200 ft towards Koi Fish.")));
 
-        ViewInteraction materialButton8 = onView(
+        ViewInteraction materialButton7 = onView(
                 allOf(withId(R.id.nextButton), withText("Next Entrance and Exit Gate (11200 ft)"),
                         childAtPosition(
                                 childAtPosition(
@@ -259,17 +194,17 @@ public class DetailedBriefDirectionTest {
                                         0),
                                 1),
                         isDisplayed()));
-        materialButton8.perform(click());
+        materialButton7.perform(click());
 
-        try{ViewInteraction materialButton9 = onView(
-                    allOf(withId(R.id.nextButton), withText("Finish"),
-                            childAtPosition(
-                                    childAtPosition(
-                                            withId(android.R.id.content),
-                                            0),
-                                    1),
-                            isDisplayed()));
-            materialButton9.perform(click());
+        try{ViewInteraction materialButton8 = onView(
+                allOf(withId(R.id.nextButton), withText("Finish"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(android.R.id.content),
+                                        0),
+                                1),
+                        isDisplayed()));
+            materialButton8.perform(click());
         }catch (Exception e) {
             System.out.println(" ");
         }
@@ -295,3 +230,4 @@ public class DetailedBriefDirectionTest {
         };
     }
 }
+
