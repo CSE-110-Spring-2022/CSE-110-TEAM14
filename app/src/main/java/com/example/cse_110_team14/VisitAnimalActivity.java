@@ -229,47 +229,52 @@ public class VisitAnimalActivity extends AppCompatActivity {
             offRouteCalled = false;
             currIndex++;
             if (currIndex == animalsInOrder.size()) {
+                currIndex --;
                 finishVisit();
-            }
-            ActivityData.setDirectionsIndex(this, "index.json", currIndex);
-            Log.d("VisitAnimalActivity", "currIndex: " + animalsInOrder.get(currIndex));
-            ZooData.VertexInfo currExhibitDisplayed =
-                    animalMap.get(exhibitIDsInOrder.get(currIndex));
-            futureExhibits.clear();
-            if ((currIndex + 1) != visitList.size()) {
-                for (int i = currIndex + 1; i < visitList.size(); ++i) {
-                    futureExhibits.add(visitList.get(i));
+            } else {
+
+
+                ActivityData.setDirectionsIndex(this, "index.json", currIndex);
+                Log.d("VisitAnimalActivity", "currIndex: " + animalsInOrder.get(currIndex));
+                ZooData.VertexInfo currExhibitDisplayed =
+                        animalMap.get(exhibitIDsInOrder.get(currIndex));
+                futureExhibits.clear();
+                if ((currIndex + 1) != visitList.size()) {
+                    for (int i = currIndex + 1; i < visitList.size(); ++i) {
+                        futureExhibits.add(visitList.get(i));
+                    }
+                }
+                presenter.updateCurrExhibitDisplayed(currExhibitDisplayed, futureExhibits);
+
+                // Sets the previous button
+                adapter.setDirections(getDirections());
+                adapter.notifyDataSetChanged();
+                skipButton.setText("Skip\n" + animalsInOrder.get(currIndex));
+                skipButton.setEnabled(true);
+                skipButton.setAlpha(1f);
+                animalName.setText(animalsInOrder.get(currIndex));
+
+                previousButton.setEnabled(true);
+                previousButton.setAlpha(1f);
+                String temp = "Previous " + animalsInOrder.get(currIndex - 1) +
+                        " (" + distance(currentLocation(), exhibitIDsInOrder.get(currIndex - 1)) + " ft)";
+                previousButton.setText(temp);
+
+                // If the index is < the size of the list - 1 , then the next button is enabled,
+                // otherwise it is disabled
+                if (currIndex < animalsInOrder.size() - 1) {
+                    temp = "Next " + animalsInOrder.get(currIndex + 1) + " (" +
+                            distance(currentLocation(), exhibitIDsInOrder.get(currIndex + 1)) +
+                            " ft)";
+                    nextButton.setText(temp);
+                } else {
+                    nextButton.setText("Finish");
+                    skipButton.setText("");
+                    skipButton.setEnabled(false);
+                    skipButton.setAlpha(.8f);
                 }
             }
-            presenter.updateCurrExhibitDisplayed(currExhibitDisplayed, futureExhibits);
 
-            // Sets the previous button
-            adapter.setDirections(getDirections());
-            adapter.notifyDataSetChanged();
-            skipButton.setText("Skip\n" + animalsInOrder.get(currIndex));
-            skipButton.setEnabled(true);
-            skipButton.setAlpha(1f);
-            animalName.setText(animalsInOrder.get(currIndex));
-
-            previousButton.setEnabled(true);
-            previousButton.setAlpha(1f);
-            String temp = "Previous " + animalsInOrder.get(currIndex - 1) +
-                    " (" + distance(currentLocation(), exhibitIDsInOrder.get(currIndex - 1)) + " ft)";
-            previousButton.setText(temp);
-
-            // If the index is < the size of the list - 1 , then the next button is enabled,
-            // otherwise it is disabled
-            if (currIndex < animalsInOrder.size() - 1) {
-                temp = "Next " + animalsInOrder.get(currIndex + 1) + " (" +
-                        distance(currentLocation(), exhibitIDsInOrder.get(currIndex + 1)) +
-                        " ft)";
-                nextButton.setText(temp);
-            } else {
-                nextButton.setText("Finish");
-                skipButton.setText("");
-                skipButton.setEnabled(false);
-                skipButton.setAlpha(.8f);
-            }
         });
 
         // Permission Checking
