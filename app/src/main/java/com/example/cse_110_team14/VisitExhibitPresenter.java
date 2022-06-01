@@ -5,7 +5,8 @@ import android.util.Pair;
 
 import java.util.List;
 
-public class VisitExhibitPresenter {
+public class VisitExhibitPresenter implements LocationSubject {
+    public LocationObserver locationObserver = null;
     private final VisitAnimalActivity activity;
     private final VisitExhibitModel model;
 
@@ -13,6 +14,12 @@ public class VisitExhibitPresenter {
         this.activity = activity;
         this.model = model;
     }
+
+    public void setLocationObserver(LocationObserver locationObserver) {
+        this.locationObserver = locationObserver;
+    }
+
+
 
     public void updateCurrExhibitDisplayed(ZooData.VertexInfo exhibit, List<ZooData.VertexInfo> futureExhibits) {
         model.setCurrExhibitDisplayed(exhibit);
@@ -37,10 +44,17 @@ public class VisitExhibitPresenter {
             int newDist = activity.distance(activity.currentLocation(), exhibitIDsInOrder.get(i));
             if( newDist < currDistance && currIndex != exhibitIDsInOrder.size() - 2) {
                 activity.offRoutePrompt();
+                if (locationObserver != null && locationHelper()) {
+                    locationObserver.onChange();
+                }
                 break;
             }
         }
 
+    }
+
+    public boolean locationHelper() {
+        return false;
     }
 
     public void updateLatsAndLngs(List<ZooData.VertexInfo> exhibitList) {

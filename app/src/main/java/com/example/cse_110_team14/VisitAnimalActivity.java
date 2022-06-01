@@ -39,7 +39,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 // This is where you get directions
-public class VisitAnimalActivity extends AppCompatActivity {
+public class VisitAnimalActivity extends AppCompatActivity implements LocationObserver {
 
     public RecyclerView recyclerView;
     public Button nextButton;
@@ -163,7 +163,9 @@ public class VisitAnimalActivity extends AppCompatActivity {
             skipButton.setEnabled(false);
             skipButton.setAlpha(0.8f);
         }
-
+        if(presenter != null) {
+            presenter.setLocationObserver(this);
+        }
 
 
         animalName.setText(animalsInOrder.get(currIndex));
@@ -510,6 +512,9 @@ public class VisitAnimalActivity extends AppCompatActivity {
         return getClosestVertex();
     }
 
+    public void onChange(){
+        offRoutePrompt();
+    }
     public void offRoutePrompt() {
         if(offRouteCalled){
             return;
